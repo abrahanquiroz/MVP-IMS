@@ -1,4 +1,5 @@
 import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 
 export default function LandingPage() {
@@ -12,12 +13,18 @@ export default function LandingPage() {
 
       {/* Branding ~40% */}
       <header className="flex h-[40%] w-full flex-col items-center justify-center space-y-4 pt-12">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary monogram-glow">
-          <span className="text-3xl font-extrabold tracking-tighter text-primary-foreground">W</span>
-        </div>
+        <Image
+          src="/logo-icon.png"
+          alt="WellTracker"
+          width={72}
+          height={72}
+          className="rounded-2xl shadow-lg shadow-primary/20"
+          priority
+        />
         <div className="text-center">
-          <h1 className="text-[26px] font-semibold leading-tight tracking-tight text-foreground">
-            WellTracker
+          <h1 className="text-[28px] font-bold leading-tight tracking-tight">
+            <span className="text-[#00b4a0]">Well</span>
+            <span className="text-[#6750a4]">Tracker</span>
           </h1>
           <p className="mt-1 text-[15px] font-medium text-muted-foreground">
             Cuidá a quienes querés
@@ -30,12 +37,7 @@ export default function LandingPage() {
         <div className="relative flex h-full w-full max-w-[280px] items-end justify-center">
           <div className="absolute bottom-0 right-1/4 h-40 w-16 rounded-t-full bg-[var(--surface-container-high)] opacity-40" />
           <div className="absolute bottom-0 left-1/4 h-28 w-12 rounded-t-full bg-[var(--surface-variant)] opacity-50" />
-          <svg
-            className="absolute bottom-16 h-24 w-32 text-primary opacity-30"
-            fill="none"
-            viewBox="0 0 100 60"
-            aria-hidden
-          >
+          <svg className="absolute bottom-16 h-24 w-32 text-primary opacity-30" fill="none" viewBox="0 0 100 60" aria-hidden>
             <path d="M10 50C10 20 90 20 90 50" stroke="currentColor" strokeDasharray="4 4" strokeWidth="2" />
           </svg>
           <div className="pointer-events-none absolute bottom-0 h-1/2 w-full bg-gradient-to-t from-white to-transparent" />
@@ -52,10 +54,7 @@ export default function LandingPage() {
             <Link href="/auth/login">Ya tengo cuenta — Iniciar sesión</Link>
           </Button>
           <div className="pt-4 text-center">
-            <Link
-              href="/auth/login"
-              className="text-sm font-medium text-muted-foreground underline decoration-[var(--outline-variant)] underline-offset-4 transition-colors hover:text-foreground"
-            >
+            <Link href="/auth/login" className="text-sm font-medium text-muted-foreground underline decoration-[var(--outline-variant)] underline-offset-4 transition-colors hover:text-foreground">
               ¿Sos la persona monitoreada?
             </Link>
           </div>

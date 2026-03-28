@@ -40,9 +40,7 @@ export function RecipientHome({ profile, pendingMedications, allTakenToday }: Re
       {/* Top bar */}
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/15 sm:h-12 sm:w-12">
-            <span className="text-lg text-primary sm:text-xl">✦</span>
-          </div>
+          <img src="/logo-icon.png" alt="WellTracker" className="h-10 w-10 rounded-xl sm:h-12 sm:w-12" />
           <div>
             <p className="text-xs text-muted-foreground sm:text-sm">Hola,</p>
             <p className="text-xl font-bold text-foreground sm:text-2xl">{firstName}</p>

@@ -50,8 +50,9 @@ export function ConfirmMedication({ medication, userId, caregiverName, alreadyTa
       {/* Top bar */}
       <div className="mb-8 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="text-lg text-primary">✦</span>
-          <span className="text-lg font-bold tracking-tight text-primary">WellTracker</span>
+          <span className="text-lg font-bold tracking-tight">
+            <span className="text-[#00b4a0]">Well</span><span className="text-[#6750a4]">Tracker</span>
+          </span>
         </div>
         <Link href="/dashboard/recipient" className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--surface-container-high)]">
           <span className="text-sm text-muted-foreground">←</span>

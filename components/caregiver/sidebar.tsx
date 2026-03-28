@@ -63,10 +63,10 @@ export function CaregiverSidebar({ user }: SidebarProps) {
       >
         {/* Logo */}
         <div className="flex h-16 items-center gap-2.5 border-b border-sidebar-border px-6">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary monogram-glow">
-            <span className="text-sm font-extrabold text-white">W</span>
-          </div>
-          <span className="text-lg font-semibold tracking-tight text-primary">WellTracker</span>
+          <img src="/logo-icon.png" alt="WellTracker" className="h-9 w-9 rounded-xl" />
+          <span className="text-lg font-bold tracking-tight">
+            <span className="text-[#00b4a0]">Well</span><span className="text-[#6750a4]">Tracker</span>
+          </span>
         </div>
 
         {/* Nav */}

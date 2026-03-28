@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { signOut } from "@/app/auth/actions"
 import { Bell, LogOut } from "lucide-react"
+import { LogoIcon } from "@/components/brand/logo"
 import { useTransition, useState } from "react"
 import { format } from "date-fns"
 import { es } from "date-fns/locale"
@@ -27,9 +28,7 @@ export function CaregiverTopBar({ user, alertCount = 0 }: TopBarProps) {
     <>
       <header className="sticky top-0 z-50 flex h-14 w-full items-center justify-between bg-white px-4 sm:h-16 sm:px-6">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--primary-container)] text-sm font-bold text-[var(--on-primary-container)]">
-            {initials}
-          </div>
+        <LogoIcon size={40} className="rounded-xl" />
           <div>
             <p className="text-[15px] font-semibold leading-tight text-foreground">
               Hola, {user.fullName.split(" ")[0]}

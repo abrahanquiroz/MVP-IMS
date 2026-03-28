@@ -1,4 +1,5 @@
 import Link from "next/link"
+import Image from "next/image"
 import { LoginForm } from "./login-form"
 
 export default async function LoginPage(props: {
@@ -16,10 +17,10 @@ export default async function LoginPage(props: {
       <div className="relative z-10 w-full max-w-md">
         {/* Brand */}
         <header className="mb-10 flex flex-col items-center">
-          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary shadow-lg shadow-primary/20">
-            <span className="text-2xl font-bold text-white">W</span>
-          </div>
-          <h1 className="text-xl font-semibold tracking-tight text-primary">WellTracker</h1>
+          <Image src="/logo-icon.png" alt="WellTracker" width={48} height={48} className="mb-3 rounded-xl shadow-lg shadow-primary/20" priority />
+          <h1 className="text-xl font-bold tracking-tight">
+            <span className="text-[#00b4a0]">Well</span><span className="text-[#6750a4]">Tracker</span>
+          </h1>
         </header>
 
         <div className="mb-8 text-center">
