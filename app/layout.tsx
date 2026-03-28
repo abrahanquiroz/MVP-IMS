@@ -19,8 +19,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "CareLink — Seguimiento de salud",
   description:
-    "Cuidado conectado: cuidadores y personas cuidadas. Inspirado en flujos de salud móvil tipo WellTracker.",
-  generator: "CareLink",
+    "Cuidado conectado: cuidadores y personas cuidadas en tiempo real.",
   icons: {
     icon: [
       { url: "/icon-light-32x32.png", media: "(prefers-color-scheme: light)" },
@@ -32,7 +31,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: "#0b1326",
+  themeColor: "#ffffff",
   width: "device-width",
   initialScale: 1,
   userScalable: true,
@@ -44,12 +43,12 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es" className="dark">
+    <html lang="es" className="light">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} font-sans app-shell selection:bg-primary/30`}
+        className={`${geistSans.variable} ${geistMono.variable} font-sans app-shell selection:bg-primary/20`}
       >
         {children}
-        <Toaster position="top-center" richColors theme="dark" />
+        <Toaster position="top-center" richColors />
         <Analytics />
       </body>
     </html>

@@ -44,7 +44,9 @@ export async function signIn(formData: FormData) {
 export async function signUp(formData: FormData) {
   const email = (formData.get("email") as string)?.trim()
   const password = formData.get("password") as string
-  const fullName = (formData.get("full_name") as string)?.trim() ?? ""
+  const firstName = (formData.get("first_name") as string)?.trim() ?? ""
+  const lastName = (formData.get("last_name") as string)?.trim() ?? ""
+  const fullName = [firstName, lastName].filter(Boolean).join(" ")
   /** Solo registro público como cuidador; las personas cuidadas las da de alta el cuidador. */
   const role = "caregiver" as const
 

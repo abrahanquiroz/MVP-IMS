@@ -3,59 +3,65 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/*
- * CareLink — WellTracker / Vigilant Obsidian (referencia de diseño compartida).
- * Superficie #0b1326, primario violeta #cebdff → #a78bfa, acento salud #44e2cd.
- */
-
 :root {
-  --background: #0b1326;
-  --foreground: #dae2fd;
-  --card: #222a3d;
-  --card-foreground: #dae2fd;
-  --popover: #222a3d;
-  --popover-foreground: #dae2fd;
-  --primary: #a78bfa;
-  --primary-foreground: #3c1989;
-  --primary-text: #cebdff;
-  --secondary: #44e2cd;
-  --secondary-foreground: #003731;
-  --muted: #131b2e;
-  --muted-foreground: #cac4d4;
-  --accent: #171f33;
-  --accent-foreground: #dae2fd;
-  --destructive: #ffb4ab;
-  --destructive-foreground: #690005;
-  --border: color-mix(in srgb, #494552 35%, transparent);
-  --input: #131b2e;
-  --ring: #a78bfa;
-  --chart-1: #cebdff;
-  --chart-2: #44e2cd;
-  --chart-3: #ffb95f;
-  --chart-4: #a78bfa;
-  --chart-5: #03c6b2;
+  --background: #ffffff;
+  --foreground: #1c1b1f;
+  --card: #ffffff;
+  --card-foreground: #1c1b1f;
+  --popover: #ffffff;
+  --popover-foreground: #1c1b1f;
+  --primary: #6750a4;
+  --primary-foreground: #ffffff;
+  --secondary: #006a60;
+  --secondary-foreground: #ffffff;
+  --muted: #f3edf7;
+  --muted-foreground: #49454f;
+  --accent: #e8def8;
+  --accent-foreground: #21005d;
+  --destructive: #ba1a1a;
+  --destructive-foreground: #ffffff;
+  --border: #cac4d0;
+  --input: #e6e1ef;
+  --ring: #6750a4;
+  --chart-1: #6750a4;
+  --chart-2: #006a60;
+  --chart-3: #8d5e00;
+  --chart-4: #cebdff;
+  --chart-5: #3cddc7;
   --radius: 0.5rem;
 
-  --sidebar: #131b2e;
-  --sidebar-foreground: #dae2fd;
-  --sidebar-primary: #a78bfa;
-  --sidebar-primary-foreground: #3c1989;
-  --sidebar-accent: #222a3d;
-  --sidebar-accent-foreground: #cebdff;
-  --sidebar-border: color-mix(in srgb, #494552 40%, transparent);
-  --sidebar-ring: #a78bfa;
+  --sidebar: #f3edf7;
+  --sidebar-foreground: #1c1b1f;
+  --sidebar-primary: #6750a4;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #e8def8;
+  --sidebar-accent-foreground: #21005d;
+  --sidebar-border: #cac4d0;
+  --sidebar-ring: #6750a4;
 
-  --success: #44e2cd;
-  --success-foreground: #003731;
-  --warning: #ffb95f;
-  --warning-foreground: #472a00;
-  --critical: #ffb4ab;
-  --critical-foreground: #690005;
+  --success: #006a60;
+  --success-foreground: #ffffff;
+  --warning: #8d5e00;
+  --warning-foreground: #ffffff;
+  --critical: #ba1a1a;
+  --critical-foreground: #ffffff;
 
-  --surface-container: #171f33;
-  --surface-container-high: #222a3d;
-  --surface-bright: #31394d;
-  --outline-variant: #494552;
+  --surface-container: #f3edf7;
+  --surface-container-high: #ece6f0;
+  --surface-container-low: #f7f2fa;
+  --surface-bright: #fef7ff;
+  --surface-variant: #e6e1ef;
+  --outline-variant: #cac4d0;
+  --on-surface-variant: #49454f;
+  --primary-container: #e8def8;
+  --on-primary-container: #21005d;
+  --error-container: #ffdad6;
+  --on-error-container: #410002;
+  --tertiary: #8d5e00;
+  --tertiary-container: #ffdcbe;
+  --on-tertiary-container: #2a1700;
+  --secondary-container: #b4efe4;
+  --on-secondary-container: #00201c;
 }
 
 @theme inline {
@@ -112,34 +118,22 @@
   body {
     @apply bg-background text-foreground antialiased;
   }
-  h1,
-  h2,
-  h3,
-  h4 {
+  h1, h2, h3, h4 {
     letter-spacing: -0.02em;
   }
 }
 
 @layer utilities {
-  .bg-obsidian-gradient {
-    background: radial-gradient(circle at top right, #131b2e, #0b1326);
-  }
-  .bg-obsidian-mesh {
-    background-color: #0b1326;
-    background-image:
-      radial-gradient(at 0% 0%, rgba(206, 189, 255, 0.08) 0px, transparent 50%),
-      radial-gradient(at 100% 100%, rgba(68, 226, 205, 0.06) 0px, transparent 45%);
+  .bg-light-gradient {
+    background: radial-gradient(circle at top right, #f3edf7, #ffffff);
   }
   .monogram-glow {
-    box-shadow: 0 0 30px rgba(167, 139, 250, 0.35);
+    box-shadow: 0 4px 12px rgba(103, 80, 164, 0.2);
   }
-  .glass-overlay {
+  .glass-card {
+    background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    background: rgba(19, 27, 46, 0.6);
-  }
-  .cta-gradient {
-    background: linear-gradient(135deg, #cebdff 0%, #a78bfa 100%);
   }
   .app-shell {
     min-height: 100dvh;

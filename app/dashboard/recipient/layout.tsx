@@ -43,7 +43,7 @@ export default async function RecipientLayout({
   }
 
   return (
-    <div className="min-h-screen bg-obsidian-mesh">
+    <div className="min-h-screen bg-white">
       <RecipientHeader
         user={{
           id: user.id,

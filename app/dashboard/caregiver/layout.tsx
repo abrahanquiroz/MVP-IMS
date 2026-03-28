@@ -42,7 +42,7 @@ export default async function CaregiverLayout({
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-obsidian-mesh">
+    <div className="flex h-screen overflow-hidden bg-white">
       <CaregiverSidebar
         user={{ id: user.id, email: user.email ?? "", fullName: profile.full_name ?? "Cuidador" }}
       />

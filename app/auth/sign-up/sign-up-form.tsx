@@ -21,19 +21,24 @@ function GoogleIcon({ className }: { className?: string }) {
   )
 }
 
+function AppleIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+    </svg>
+  )
+}
+
 export function SignUpForm() {
   const [isPending, startTransition] = useTransition()
   const [googleLoading, setGoogleLoading] = useState(false)
+  const [googleError, setGoogleError] = useState("")
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
-    startTransition(() => {
-      signUp(formData)
-    })
+    startTransition(() => { signUp(formData) })
   }
-
-  const [googleError, setGoogleError] = useState("")
 
   async function handleGoogleSignUp() {
     setGoogleLoading(true)
@@ -44,102 +49,81 @@ export function SignUpForm() {
       const redirectTo = `${window.location.origin}/auth/callback`
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: {
-          redirectTo,
-          queryParams: { prompt: "select_account" },
-        },
+        options: { redirectTo, queryParams: { prompt: "select_account" } },
       })
-      if (error) {
-        setGoogleError(mapOAuthProviderError(error.message))
-        setGoogleLoading(false)
-      }
+      if (error) { setGoogleError(mapOAuthProviderError(error.message)); setGoogleLoading(false) }
     } catch (e) {
-      setGoogleError(
-        e instanceof Error
-          ? mapOAuthProviderError(e.message)
-          : "No se pudo abrir el registro con Google.",
-      )
+      setGoogleError(e instanceof Error ? mapOAuthProviderError(e.message) : "No se pudo abrir el registro con Google.")
       setGoogleLoading(false)
     }
   }
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex gap-3 rounded-xl border border-[#a78bfa]/25 bg-[#a78bfa]/10 p-4">
-        <Stethoscope className="h-9 w-9 shrink-0 text-[#cebdff]" />
-        <div className="text-sm leading-relaxed text-[#cac4d4]">
-          <p className="font-medium text-[#dae2fd]">Registro solo para cuidadores</p>
+      <div className="flex gap-3 rounded-xl border border-primary/15 bg-primary/5 p-4">
+        <Stethoscope className="h-9 w-9 shrink-0 text-primary" />
+        <div className="text-sm leading-relaxed text-muted-foreground">
+          <p className="font-medium text-foreground">Registro solo para cuidadores</p>
           <p className="mt-1">
-            Las cuentas de <strong className="text-[#dae2fd]">persona cuidada</strong> las crea tu
+            Las cuentas de <strong className="text-foreground">persona cuidada</strong> las crea tu
             cuidador desde el panel (pacientes), con correo y contraseña.
           </p>
         </div>
       </div>
 
-      <Button
-        type="button"
-        variant="outline"
-        className="w-full h-11 gap-3 text-sm font-medium"
-        onClick={handleGoogleSignUp}
-        disabled={googleLoading}
-      >
-        {googleLoading ? <Spinner className="h-5 w-5" /> : <GoogleIcon className="h-5 w-5" />}
-        Continuar con Google (cuidador)
-      </Button>
+      {/* Form fields */}
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <div className="grid grid-cols-2 gap-4">
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="first_name" className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground ml-1">Nombre</Label>
+            <Input id="first_name" name="first_name" placeholder="Tu nombre" required autoComplete="given-name" />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="last_name" className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground ml-1">Apellido</Label>
+            <Input id="last_name" name="last_name" placeholder="Apellido" autoComplete="family-name" />
+          </div>
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="email" className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground ml-1">Email</Label>
+          <Input id="email" name="email" type="email" placeholder="ejemplo@correo.com" required autoComplete="email" />
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="password" className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground ml-1">Contraseña</Label>
+          <Input id="password" name="password" type="password" placeholder="••••••••" required autoComplete="new-password" minLength={6} />
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="password_confirm" className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground ml-1">Confirmar contraseña</Label>
+          <Input id="password_confirm" name="password_confirm" type="password" placeholder="••••••••" required autoComplete="new-password" minLength={6} />
+        </div>
 
-      {googleError && (
-        <p className="rounded-lg bg-[#ffb95f]/10 p-2.5 text-center text-sm text-[#ffb95f]">
-          {googleError}
-        </p>
-      )}
+        {/* Divider */}
+        <div className="flex items-center gap-4 py-4">
+          <div className="h-px flex-grow bg-[var(--outline-variant)]/30" />
+          <span className="whitespace-nowrap text-[10px] font-medium uppercase tracking-wide text-muted-foreground">o registrarse con</span>
+          <div className="h-px flex-grow bg-[var(--outline-variant)]/30" />
+        </div>
 
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t" />
+        {/* SSO */}
+        <div className="grid grid-cols-2 gap-4">
+          <Button type="button" variant="outline" className="h-11 gap-3 bg-white text-sm font-semibold text-foreground hover:bg-gray-50" onClick={handleGoogleSignUp} disabled={googleLoading}>
+            {googleLoading ? <Spinner className="h-5 w-5" /> : <GoogleIcon className="h-5 w-5" />}
+            Google
+          </Button>
+          <Button type="button" variant="outline" className="h-11 gap-3 bg-white text-sm font-semibold text-foreground hover:bg-gray-50">
+            <AppleIcon className="h-5 w-5" />
+            Apple
+          </Button>
         </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-[#0b1326] px-2 text-[#cac4d4]">o con correo electrónico</span>
-        </div>
-      </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="full_name">Nombre completo</Label>
-          <Input
-            id="full_name"
-            name="full_name"
-            type="text"
-            placeholder="Tu nombre como cuidador"
-            required
-            autoComplete="name"
-          />
-        </div>
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="email">Correo electrónico</Label>
-          <Input
-            id="email"
-            name="email"
-            type="email"
-            placeholder="tu@ejemplo.com"
-            required
-            autoComplete="email"
-          />
-        </div>
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="password">Contraseña</Label>
-          <Input
-            id="password"
-            name="password"
-            type="password"
-            placeholder="Crea una contraseña"
-            required
-            autoComplete="new-password"
-            minLength={6}
-          />
-        </div>
-        <Button type="submit" disabled={isPending} className="w-full mt-2">
+        {googleError && (
+          <p className="rounded-lg bg-[var(--error-container)] p-2.5 text-center text-sm text-[var(--on-error-container)]">
+            {googleError}
+          </p>
+        )}
+
+        <Button type="submit" disabled={isPending} className="mt-2 w-full">
           {isPending ? <Spinner className="mr-2" /> : null}
-          Crear cuenta de cuidador
+          Continuar
         </Button>
       </form>
     </div>

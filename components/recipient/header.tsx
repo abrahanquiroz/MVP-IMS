@@ -11,6 +11,7 @@ import {
   CalendarDays,
   Bell,
   LogOut,
+  Settings,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useTransition } from "react"
@@ -33,31 +34,22 @@ export function RecipientHeader({ user }: HeaderProps) {
 
   return (
     <>
-      <header className="fixed top-0 z-50 flex h-16 w-full items-center justify-between border-b border-[#494552]/20 bg-[#131b2e] px-4 shadow-[0_40px_40px_10px_rgba(0,0,0,0.35)] sm:px-6">
+      {/* Top bar */}
+      <header className="fixed top-0 z-50 flex h-16 w-full items-center justify-between border-b border-[var(--surface-variant)]/30 bg-white px-4 sm:px-6">
         <Link href="/dashboard/recipient" className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#a78bfa] monogram-glow">
-            <span className="text-sm font-extrabold text-[#3c1989]">C</span>
+          <div className="flex h-8 w-8 overflow-hidden rounded-full border border-[var(--outline)]/10 bg-[var(--surface-container-high)]">
+            <span className="m-auto text-sm font-bold text-primary">
+              {user.fullName.charAt(0).toUpperCase()}
+            </span>
           </div>
-          <span className="text-lg font-bold tracking-tight text-[#cebdff]">CareLink</span>
+          <span className="text-xl font-bold tracking-tight text-primary">WellTracker</span>
         </Link>
         <div className="flex items-center gap-2">
-          <span className="hidden max-w-[120px] truncate text-xs text-[#cac4d4] sm:inline">
-            {user.fullName.split(" ")[0]}
-          </span>
-          <form
-            action={() => {
-              startTransition(() => {
-                signOut()
-              })
-            }}
-          >
-            <Button
-              type="submit"
-              variant="ghost"
-              size="sm"
-              disabled={isPending}
-              className="h-9 text-[#cac4d4] hover:bg-[#222a3d] hover:text-[#dae2fd]"
-            >
+          <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
+            <Settings className="h-5 w-5" />
+          </Button>
+          <form action={() => { startTransition(() => { signOut() }) }}>
+            <Button type="submit" variant="ghost" size="sm" disabled={isPending} className="text-muted-foreground">
               <LogOut className="mr-1 h-4 w-4" />
               <span className="hidden sm:inline">Salir</span>
             </Button>
@@ -65,7 +57,8 @@ export function RecipientHeader({ user }: HeaderProps) {
         </div>
       </header>
 
-      <nav className="fixed bottom-0 left-0 z-50 flex min-h-[4.5rem] w-full items-center justify-around border-t border-[#494552]/15 bg-[#0b1326]/60 px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur-xl shadow-[0_-10px_40px_rgba(0,0,0,0.4)] sm:px-4">
+      {/* Bottom nav — matches Stitch light mode */}
+      <nav className="fixed bottom-0 left-0 z-50 flex min-h-18 w-full items-center justify-around border-t border-[var(--outline)]/10 bg-white/80 px-4 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur-xl shadow-[0_-4px_20px_rgba(0,0,0,0.05)] sm:px-4">
         {navItems.map((item) => {
           const isActive =
             item.href === "/dashboard/recipient"
@@ -76,17 +69,20 @@ export function RecipientHeader({ user }: HeaderProps) {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex min-h-[44px] min-w-[44px] flex-col items-center justify-center rounded-lg px-2 py-1 transition-all active:scale-90",
+                "flex min-h-[44px] min-w-[44px] flex-col items-center justify-center rounded-xl px-3 py-1.5 transition-all active:scale-90",
                 isActive
-                  ? "bg-[#a78bfa]/15 text-[#cebdff]"
-                  : "text-[#cac4d4]/70 hover:text-[#cebdff]"
+                  ? "bg-[var(--primary-container)] text-[var(--on-primary-container)]"
+                  : "text-muted-foreground hover:text-primary"
               )}
             >
               <item.icon
-                className={cn("h-5 w-5", isActive && "text-[#cebdff]")}
+                className={cn("mb-0.5 h-5 w-5")}
                 strokeWidth={isActive ? 2.25 : 1.75}
               />
-              <span className="mt-0.5 max-w-[4.5rem] truncate text-[10px] font-medium uppercase tracking-wide">
+              <span className={cn(
+                "max-w-[4.5rem] truncate text-[10px] uppercase tracking-wide",
+                isActive ? "font-bold" : "font-medium"
+              )}>
                 {item.label}
               </span>
             </Link>

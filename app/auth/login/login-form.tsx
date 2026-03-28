@@ -8,7 +8,7 @@ import { useTransition, useState } from "react"
 import { Spinner } from "@/components/ui/spinner"
 import { createClient } from "@/lib/supabase/client"
 import { mapOAuthProviderError } from "@/lib/auth-oauth-errors"
-import { Mail, Lock } from "lucide-react"
+import { Mail, Lock, Eye } from "lucide-react"
 
 function GoogleIcon({ className }: { className?: string }) {
   return (
@@ -21,9 +21,18 @@ function GoogleIcon({ className }: { className?: string }) {
   )
 }
 
+function AppleIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+    </svg>
+  )
+}
+
 export function LoginForm() {
   const [isPending, startTransition] = useTransition()
   const [googleLoading, setGoogleLoading] = useState(false)
+  const [googleError, setGoogleError] = useState("")
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -33,8 +42,6 @@ export function LoginForm() {
     })
   }
 
-  const [googleError, setGoogleError] = useState("")
-
   async function handleGoogleSignIn() {
     setGoogleLoading(true)
     setGoogleError("")
@@ -43,10 +50,7 @@ export function LoginForm() {
       const redirectTo = `${window.location.origin}/auth/callback`
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: {
-          redirectTo,
-          queryParams: { prompt: "select_account" },
-        },
+        options: { redirectTo, queryParams: { prompt: "select_account" } },
       })
       if (error) {
         setGoogleError(mapOAuthProviderError(error.message))
@@ -54,9 +58,7 @@ export function LoginForm() {
       }
     } catch (e) {
       setGoogleError(
-        e instanceof Error
-          ? mapOAuthProviderError(e.message)
-          : "No se pudo abrir el inicio con Google.",
+        e instanceof Error ? mapOAuthProviderError(e.message) : "No se pudo abrir el inicio con Google.",
       )
       setGoogleLoading(false)
     }
@@ -66,41 +68,27 @@ export function LoginForm() {
     <div className="flex flex-col gap-5">
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <div className="space-y-1.5">
-          <Label htmlFor="email" className="px-1 text-[11px] font-semibold uppercase tracking-wider text-[#cac4d4]">
+          <Label htmlFor="email" className="px-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             Email
           </Label>
           <div className="relative">
-            <Mail className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-[#cac4d4]" />
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="nombre@ejemplo.com"
-              required
-              autoComplete="email"
-              className="pl-10"
-            />
+            <Mail className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-muted-foreground" />
+            <Input id="email" name="email" type="email" placeholder="nombre@ejemplo.com" required autoComplete="email" className="bg-[var(--surface-container-low)] pl-10" />
           </div>
         </div>
         <div className="space-y-1.5">
           <div className="flex items-end justify-between px-1">
-            <Label htmlFor="password" className="text-[11px] font-semibold uppercase tracking-wider text-[#cac4d4]">
+            <Label htmlFor="password" className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               Contraseña
             </Label>
-            <span className="text-[13px] font-medium text-[#cebdff]/80">Olvidé mi contraseña</span>
+            <span className="cursor-pointer text-[13px] font-medium text-primary transition-colors hover:text-primary/80">
+              Olvidé mi contraseña
+            </span>
           </div>
           <div className="relative">
-            <Lock className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-[#cac4d4]" />
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              placeholder="••••••••"
-              required
-              autoComplete="current-password"
-              minLength={6}
-              className="pl-10"
-            />
+            <Lock className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-muted-foreground" />
+            <Input id="password" name="password" type="password" placeholder="••••••••" required autoComplete="current-password" minLength={6} className="bg-[var(--surface-container-low)] pl-10 pr-10" />
+            <Eye className="pointer-events-none absolute right-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-muted-foreground" />
           </div>
         </div>
         <Button type="submit" disabled={isPending} className="mt-2 w-full py-3.5">
@@ -109,37 +97,32 @@ export function LoginForm() {
         </Button>
       </form>
 
+      {/* Divider */}
       <div className="relative my-2">
         <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t border-[#494552]/15" />
+          <span className="w-full border-t border-[var(--outline-variant)]/15" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-[#222a3d] px-3 text-[11px] font-bold tracking-widest text-[#cac4d4]">
+          <span className="bg-[var(--surface-container-high)] px-3 text-[11px] font-bold tracking-widest text-muted-foreground">
             o
           </span>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <Button
-          type="button"
-          variant="outline"
-          className="h-11 gap-2 text-xs font-semibold"
-          onClick={handleGoogleSignIn}
-          disabled={googleLoading}
-        >
+      {/* SSO */}
+      <div className="grid grid-cols-2 gap-4">
+        <Button type="button" variant="outline" className="h-11 gap-2 border-[var(--outline-variant)]/15 bg-white text-sm font-semibold text-foreground hover:bg-gray-50" onClick={handleGoogleSignIn} disabled={googleLoading}>
           {googleLoading ? <Spinner className="h-5 w-5" /> : <GoogleIcon className="h-5 w-5" />}
           Google
         </Button>
+        <Button type="button" variant="outline" className="h-11 gap-2 border-[var(--outline-variant)]/15 bg-white text-sm font-semibold text-foreground hover:bg-gray-50">
+          <AppleIcon className="h-5 w-5" />
+          Apple
+        </Button>
       </div>
 
-      <p className="text-center text-xs leading-relaxed text-[#cac4d4]/90">
-        Google: para cuidadores que se registraron con Google. Personas cuidadas: correo y
-        contraseña que les dio su cuidador.
-      </p>
-
       {googleError && (
-        <p className="rounded-lg bg-[#ffb95f]/10 p-2.5 text-center text-sm text-[#ffb95f]">
+        <p className="rounded-lg bg-[var(--error-container)] p-2.5 text-center text-sm text-[var(--on-error-container)]">
           {googleError}
         </p>
       )}

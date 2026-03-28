@@ -42,7 +42,7 @@ export function CaregiverSidebar({ user }: SidebarProps) {
       <Button
         variant="ghost"
         size="icon"
-        className="fixed top-3 left-3 z-50 min-h-11 min-w-11 rounded-xl border border-sidebar-border bg-sidebar shadow-sm lg:hidden"
+        className="fixed top-3 left-3 z-50 min-h-11 min-w-11 rounded-xl border border-[var(--outline-variant)] bg-white shadow-sm lg:hidden"
         onClick={() => setIsOpen(!isOpen)}
         aria-label="Alternar navegación"
       >
@@ -51,25 +51,22 @@ export function CaregiverSidebar({ user }: SidebarProps) {
 
       {/* Overlay */}
       {isOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-foreground/30 lg:hidden"
-          onClick={() => setIsOpen(false)}
-        />
+        <div className="fixed inset-0 z-40 bg-foreground/20 lg:hidden" onClick={() => setIsOpen(false)} />
       )}
 
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-40 flex w-64 flex-col bg-sidebar text-sidebar-foreground border-r border-sidebar-border transition-transform lg:static lg:translate-x-0",
+          "fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground transition-transform lg:static lg:translate-x-0",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         {/* Logo */}
         <div className="flex h-16 items-center gap-2.5 border-b border-sidebar-border px-6">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#a78bfa] monogram-glow">
-            <span className="text-sm font-extrabold text-[#3c1989]">C</span>
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary monogram-glow">
+            <span className="text-sm font-extrabold text-white">W</span>
           </div>
-          <span className="text-lg font-semibold tracking-tight text-[#cebdff]">CareLink</span>
+          <span className="text-lg font-semibold tracking-tight text-primary">WellTracker</span>
         </div>
 
         {/* Nav */}
@@ -88,7 +85,7 @@ export function CaregiverSidebar({ user }: SidebarProps) {
                     className={cn(
                       "flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
                       isActive
-                        ? "bg-sidebar-accent text-sidebar-primary"
+                        ? "bg-sidebar-accent text-sidebar-accent-foreground"
                         : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
                     )}
                   >
@@ -103,24 +100,16 @@ export function CaregiverSidebar({ user }: SidebarProps) {
 
         {/* User */}
         <div className="border-t border-sidebar-border p-4">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#222a3d] text-sm font-semibold text-[#cebdff] ring-1 ring-[#494552]/40">
+          <div className="mb-3 flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--surface-container-high)] text-sm font-semibold text-primary ring-1 ring-[var(--outline-variant)]">
               {user.fullName.charAt(0).toUpperCase()}
             </div>
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium">{user.fullName}</p>
-              <p className="truncate text-xs text-sidebar-foreground/60">
-                {user.email}
-              </p>
+              <p className="truncate text-xs text-sidebar-foreground/60">{user.email}</p>
             </div>
           </div>
-          <form
-            action={() => {
-              startTransition(() => {
-                signOut()
-              })
-            }}
-          >
+          <form action={() => { startTransition(() => { signOut() }) }}>
             <Button
               type="submit"
               variant="ghost"
