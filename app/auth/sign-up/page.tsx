@@ -17,11 +17,11 @@ export default async function SignUpPage(props: {
             <span className="text-2xl font-bold tracking-tight">CareLink</span>
           </div>
           <h1 className="text-4xl font-bold leading-tight mb-4 text-balance">
-            Únete a la comunidad de cuidado
+            Registro para cuidadores
           </h1>
           <p className="text-primary-foreground/80 text-lg leading-relaxed">
-            Ya seas cuidador o necesites apoyo de cuidado, CareLink te ayuda a
-            controlar la salud y mantenerte conectado.
+            Crea tu cuenta para coordinar el cuidado. Las personas cuidadas no se registran
+            aquí: su cuidador les dará de alta con correo y contraseña desde el panel.
           </p>
         </div>
       </div>
@@ -37,10 +37,10 @@ export default async function SignUpPage(props: {
 
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-foreground mb-2">
-              Crea tu cuenta
+              Cuenta de cuidador
             </h2>
             <p className="text-muted-foreground">
-              Elige tu rol para obtener la experiencia correcta
+              Correo, contraseña o Google
             </p>
           </div>
 

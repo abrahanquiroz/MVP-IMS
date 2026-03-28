@@ -12,86 +12,38 @@ import { formatDistanceToNow } from "date-fns"
 import { es } from "date-fns/locale"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
-import { createClient } from "@/lib/supabase/client"
+import { createCareRecipientAccount } from "@/app/dashboard/caregiver/patients/actions"
 
 interface PatientsViewProps {
   assignments: Record<string, unknown>[]
-  caregiverId: string
 }
 
-export function PatientsView({ assignments, caregiverId }: PatientsViewProps) {
+export function PatientsView({ assignments }: PatientsViewProps) {
   const [showForm, setShowForm] = useState(false)
   const [isPending, startTransition] = useTransition()
-  const [email, setEmail] = useState("")
   const router = useRouter()
 
-  async function handleAssign(e: React.FormEvent) {
+  function handleCreateRecipient(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    const formData = new FormData(e.currentTarget)
     startTransition(async () => {
-      try {
-        const supabase = createClient()
-
-        // Look up the care recipient by email through profiles
-        // Since we can't search auth.users, we need to search by a known identifier
-        // For now, we'll create the assignment by searching profiles
-        const { data: profiles, error: searchError } = await supabase
-          .from("profiles")
-          .select("id, full_name, role")
-          .eq("role", "care_recipient")
-
-        if (searchError) throw new Error(searchError.message)
-
-        // Note: In a production app, you'd have an invitation system
-        // For this demo, we allow linking by creating a direct assignment
-        if (!profiles || profiles.length === 0) {
-          throw new Error(
-            "No se encontraron personas cuidadas. Pídeles que creen una cuenta primero."
-          )
-        }
-
-        // Find the first unassigned care recipient for demo purposes
-        const existingIds = assignments.map(
-          (a) => (a as { care_recipient_id: string }).care_recipient_id
-        )
-        const available = profiles.filter((p) => !existingIds.includes(p.id))
-
-        if (available.length === 0) {
-          throw new Error(
-            "Todas las personas cuidadas ya están asignadas a ti."
-          )
-        }
-
-        const targetRecipient = available[0]
-
-        const { error } = await supabase
-          .from("caregiver_assignments")
-          .insert({
-            caregiver_id: caregiverId,
-            care_recipient_id: targetRecipient.id,
-            status: "active",
-          })
-
-        if (error) throw new Error(error.message)
-
-        toast.success(
-          `Conectado con ${targetRecipient.full_name || "persona cuidada"}`
-        )
-        setEmail("")
-        setShowForm(false)
-        router.refresh()
-      } catch (err) {
-        toast.error(
-          err instanceof Error ? err.message : "Error al agregar paciente"
-        )
+      const result = await createCareRecipientAccount(formData)
+      if (!result.ok) {
+        toast.error(result.error)
+        return
       }
+      toast.success("Persona cuidada creada. Ya puede iniciar sesión con ese correo y contraseña.")
+      e.currentTarget.reset()
+      setShowForm(false)
+      router.refresh()
     })
   }
 
   const active = assignments.filter(
-    (a) => (a as { status: string }).status === "active"
+    (a) => (a as { status: string }).status === "active",
   )
   const pending = assignments.filter(
-    (a) => (a as { status: string }).status === "pending"
+    (a) => (a as { status: string }).status === "pending",
   )
 
   return (
@@ -100,7 +52,7 @@ export function PatientsView({ assignments, caregiverId }: PatientsViewProps) {
         <div>
           <h1 className="text-2xl font-bold text-foreground">Mis pacientes</h1>
           <p className="text-muted-foreground mt-1">
-            Gestiona tus conexiones con personas cuidadas
+            Crea la cuenta de la persona cuidada (correo y contraseña) para que pueda entrar
           </p>
         </div>
         <Button onClick={() => setShowForm(!showForm)}>
@@ -110,49 +62,71 @@ export function PatientsView({ assignments, caregiverId }: PatientsViewProps) {
             </>
           ) : (
             <>
-              <UserPlus className="mr-2 h-4 w-4" /> Agregar paciente
+              <UserPlus className="mr-2 h-4 w-4" /> Nueva persona cuidada
             </>
           )}
         </Button>
       </div>
 
-      {/* Add Patient Form */}
       {showForm && (
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-base">
-              Conectar con persona cuidada
+              Alta de persona cuidada
             </CardTitle>
+            <p className="text-sm text-muted-foreground font-normal">
+              Se creará un usuario con rol «persona cuidada» y quedará vinculado a ti. Podrá
+              iniciar sesión en la misma app con estos datos.
+            </p>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleAssign} className="flex flex-col gap-4">
+            <form onSubmit={handleCreateRecipient} className="flex flex-col gap-4 max-w-md">
               <div className="flex flex-col gap-2">
-                <Label>Correo de la persona cuidada</Label>
+                <Label htmlFor="pc-full_name">Nombre completo</Label>
                 <Input
+                  id="pc-full_name"
+                  name="full_name"
+                  type="text"
+                  placeholder="Nombre de la persona cuidada"
+                  required
+                  autoComplete="name"
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="pc-email">Correo electrónico</Label>
+                <Input
+                  id="pc-email"
+                  name="email"
                   type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="paciente@ejemplo.com"
                   required
+                  autoComplete="email"
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="pc-password">Contraseña inicial</Label>
+                <Input
+                  id="pc-password"
+                  name="password"
+                  type="password"
+                  placeholder="Mínimo 6 caracteres"
+                  required
+                  minLength={6}
+                  autoComplete="new-password"
                 />
                 <p className="text-xs text-muted-foreground">
-                  La persona cuidada debe tener una cuenta de CareLink.
+                  Comparte esta contraseña con la persona cuidada o pídele que la cambie más adelante.
                 </p>
               </div>
-              <Button
-                type="submit"
-                disabled={isPending}
-                className="sm:self-start"
-              >
+              <Button type="submit" disabled={isPending} className="sm:self-start">
                 {isPending ? <Spinner className="mr-2" /> : null}
-                Enviar solicitud
+                Crear cuenta y vincular
               </Button>
             </form>
           </CardContent>
         </Card>
       )}
 
-      {/* Active Patients */}
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-base">
@@ -170,8 +144,7 @@ export function PatientsView({ assignments, caregiverId }: PatientsViewProps) {
                 Sin pacientes aún
               </p>
               <p className="text-sm text-muted-foreground max-w-xs">
-                Agrega una persona cuidada para comenzar a monitorear sus datos
-                de salud y coordinar su cuidado.
+                Usa «Nueva persona cuidada» para crear su usuario y contraseña.
               </p>
             </div>
           ) : (
@@ -202,7 +175,8 @@ export function PatientsView({ assignments, caregiverId }: PatientsViewProps) {
                       <p className="text-xs text-muted-foreground">
                         Conectado{" "}
                         {formatDistanceToNow(new Date(a.created_at), {
-                          addSuffix: true, locale: es,
+                          addSuffix: true,
+                          locale: es,
                         })}
                       </p>
                     </div>
@@ -217,7 +191,6 @@ export function PatientsView({ assignments, caregiverId }: PatientsViewProps) {
         </CardContent>
       </Card>
 
-      {/* Pending */}
       {pending.length > 0 && (
         <Card>
           <CardHeader className="pb-3">

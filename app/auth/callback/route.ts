@@ -72,6 +72,16 @@ export async function GET(request: Request) {
 
   cookieStore.delete(OAUTH_ROLE_COOKIE)
 
+  // Evita que un primer acceso con Google desde "Iniciar sesión" cree sesión sin rol de cuidador
+  if (!role && !roleIntent) {
+    await supabase.auth.signOut()
+    return NextResponse.redirect(
+      `${origin}/auth/sign-up?error=${encodeURIComponent(
+        "Para usar Google, regístrate primero como cuidador en «Crear cuenta». Si eres persona cuidada, entra con correo y contraseña que te dio tu cuidador.",
+      )}`,
+    )
+  }
+
   role = role || "care_recipient"
 
   if (role === "caregiver") {

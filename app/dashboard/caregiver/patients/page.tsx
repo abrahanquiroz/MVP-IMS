@@ -15,10 +15,7 @@ export default async function PatientsPage() {
 
   return (
     <div className="p-6 lg:p-8">
-      <PatientsView
-        assignments={assignments ?? []}
-        caregiverId={user!.id}
-      />
+      <PatientsView assignments={assignments ?? []} />
     </div>
   )
 }

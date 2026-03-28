@@ -45,7 +45,8 @@ export async function signUp(formData: FormData) {
   const email = (formData.get("email") as string)?.trim()
   const password = formData.get("password") as string
   const fullName = (formData.get("full_name") as string)?.trim() ?? ""
-  const role = (formData.get("role") as string) || "care_recipient"
+  /** Solo registro público como cuidador; las personas cuidadas las da de alta el cuidador. */
+  const role = "caregiver" as const
 
   const supabase = await createClient()
   const { data, error } = await supabase.auth.signUp({
@@ -66,11 +67,7 @@ export async function signUp(formData: FormData) {
   }
 
   if (data.session) {
-    const userRole = data.user?.user_metadata?.role ?? "care_recipient"
-    if (userRole === "caregiver") {
-      return redirect("/dashboard/caregiver")
-    }
-    return redirect("/dashboard/recipient")
+    return redirect("/dashboard/caregiver")
   }
 
   return redirect("/auth/sign-up-success")

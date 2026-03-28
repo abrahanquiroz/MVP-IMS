@@ -7,6 +7,7 @@ import { signIn } from "../actions"
 import { useTransition, useState } from "react"
 import { Spinner } from "@/components/ui/spinner"
 import { createClient } from "@/lib/supabase/client"
+import { mapOAuthProviderError } from "@/lib/auth-oauth-errors"
 
 function GoogleIcon({ className }: { className?: string }) {
   return (
@@ -47,12 +48,14 @@ export function LoginForm() {
         },
       })
       if (error) {
-        setGoogleError(error.message)
+        setGoogleError(mapOAuthProviderError(error.message))
         setGoogleLoading(false)
       }
     } catch (e) {
       setGoogleError(
-        e instanceof Error ? e.message : "No se pudo abrir el inicio con Google.",
+        e instanceof Error
+          ? mapOAuthProviderError(e.message)
+          : "No se pudo abrir el inicio con Google.",
       )
       setGoogleLoading(false)
     }
@@ -70,6 +73,11 @@ export function LoginForm() {
         {googleLoading ? <Spinner className="h-5 w-5" /> : <GoogleIcon className="h-5 w-5" />}
         Continuar con Google
       </Button>
+
+      <p className="text-xs text-muted-foreground text-center">
+        Google sirve para cuidadores que ya se registraron con Google. Las personas cuidadas
+        inician sesión con el correo y contraseña que les dio su cuidador.
+      </p>
 
       {googleError && (
         <p className="text-sm text-center text-amber-600 bg-amber-50 dark:bg-amber-950/30 dark:text-amber-400 rounded-lg p-2.5">

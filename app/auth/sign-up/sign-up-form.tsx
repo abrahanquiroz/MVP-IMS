@@ -6,9 +6,9 @@ import { Label } from "@/components/ui/label"
 import { setOAuthRoleIntent, signUp } from "../actions"
 import { useTransition, useState } from "react"
 import { Spinner } from "@/components/ui/spinner"
-import { Stethoscope, UserRound } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { Stethoscope } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
+import { mapOAuthProviderError } from "@/lib/auth-oauth-errors"
 
 function GoogleIcon({ className }: { className?: string }) {
   return (
@@ -24,14 +24,10 @@ function GoogleIcon({ className }: { className?: string }) {
 export function SignUpForm() {
   const [isPending, startTransition] = useTransition()
   const [googleLoading, setGoogleLoading] = useState(false)
-  const [role, setRole] = useState<"caregiver" | "care_recipient">(
-    "care_recipient"
-  )
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
-    formData.set("role", role)
     startTransition(() => {
       signUp(formData)
     })
@@ -43,7 +39,7 @@ export function SignUpForm() {
     setGoogleLoading(true)
     setGoogleError("")
     try {
-      await setOAuthRoleIntent(role)
+      await setOAuthRoleIntent("caregiver")
       const supabase = createClient()
       const redirectTo = `${window.location.origin}/auth/callback`
       const { error } = await supabase.auth.signInWithOAuth({
@@ -54,12 +50,14 @@ export function SignUpForm() {
         },
       })
       if (error) {
-        setGoogleError(error.message)
+        setGoogleError(mapOAuthProviderError(error.message))
         setGoogleLoading(false)
       }
     } catch (e) {
       setGoogleError(
-        e instanceof Error ? e.message : "No se pudo abrir el registro con Google.",
+        e instanceof Error
+          ? mapOAuthProviderError(e.message)
+          : "No se pudo abrir el registro con Google.",
       )
       setGoogleLoading(false)
     }
@@ -67,35 +65,14 @@ export function SignUpForm() {
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex flex-col gap-2">
-        <Label>Soy un...</Label>
-        <div className="grid grid-cols-2 gap-3">
-          <button
-            type="button"
-            onClick={() => setRole("caregiver")}
-            className={cn(
-              "flex flex-col items-center gap-2 rounded-xl border-2 p-4 transition-all text-sm font-medium",
-              role === "caregiver"
-                ? "border-primary bg-primary/5 text-primary"
-                : "border-border bg-card text-muted-foreground hover:border-primary/40"
-            )}
-          >
-            <Stethoscope className="h-6 w-6" />
-            Cuidador
-          </button>
-          <button
-            type="button"
-            onClick={() => setRole("care_recipient")}
-            className={cn(
-              "flex flex-col items-center gap-2 rounded-xl border-2 p-4 transition-all text-sm font-medium",
-              role === "care_recipient"
-                ? "border-primary bg-primary/5 text-primary"
-                : "border-border bg-card text-muted-foreground hover:border-primary/40"
-            )}
-          >
-            <UserRound className="h-6 w-6" />
-            Persona cuidada
-          </button>
+      <div className="rounded-xl border border-primary/25 bg-primary/5 p-4 flex gap-3">
+        <Stethoscope className="h-9 w-9 shrink-0 text-primary" />
+        <div className="text-sm text-muted-foreground leading-relaxed">
+          <p className="font-medium text-foreground">Registro solo para cuidadores</p>
+          <p className="mt-1">
+            Las cuentas de <strong>persona cuidada</strong> las crea tu cuidador desde el panel
+            (pacientes), con correo y contraseña.
+          </p>
         </div>
       </div>
 
@@ -107,7 +84,7 @@ export function SignUpForm() {
         disabled={googleLoading}
       >
         {googleLoading ? <Spinner className="h-5 w-5" /> : <GoogleIcon className="h-5 w-5" />}
-        Continuar con Google
+        Continuar con Google (cuidador)
       </Button>
 
       {googleError && (
@@ -132,7 +109,7 @@ export function SignUpForm() {
             id="full_name"
             name="full_name"
             type="text"
-            placeholder="Tu nombre completo"
+            placeholder="Tu nombre como cuidador"
             required
             autoComplete="name"
           />
@@ -162,7 +139,7 @@ export function SignUpForm() {
         </div>
         <Button type="submit" disabled={isPending} className="w-full mt-2">
           {isPending ? <Spinner className="mr-2" /> : null}
-          Crear cuenta
+          Crear cuenta de cuidador
         </Button>
       </form>
     </div>
