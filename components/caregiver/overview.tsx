@@ -36,7 +36,7 @@ export function CaregiverOverview({
   const topAlert = (recentAlerts as { severity: string; title: string; message?: string; created_at: string }[])[0]
 
   return (
-    <div className="space-y-4 px-4 pt-2">
+    <div className="space-y-4 px-4 pt-2 sm:px-6">
       {/* Alert banner */}
       {topAlert && (
         <div className="flex items-center justify-between rounded-lg border-l-4 border-[var(--tertiary)] bg-[var(--tertiary)]/10 px-4 py-3">

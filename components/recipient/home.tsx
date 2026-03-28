@@ -2,8 +2,8 @@
 
 import Link from "next/link"
 import { signOut } from "@/app/auth/actions"
-import { MessageSquare, Pill, QrCode, Heart, AlertTriangle, LogOut } from "lucide-react"
-import { useTransition } from "react"
+import { Pill, QrCode, Heart, AlertTriangle, LogOut } from "lucide-react"
+import { useTransition, useState } from "react"
 
 interface RecipientHomeProps {
   profile: {
@@ -22,28 +22,28 @@ interface RecipientHomeProps {
   caregiverName: string | null
 }
 
-export function RecipientHome({ profile, medications, caregiverName }: RecipientHomeProps) {
+export function RecipientHome({ profile, medications }: RecipientHomeProps) {
   const [isPending, startTransition] = useTransition()
+  const [showLogout, setShowLogout] = useState(false)
   const firstName = profile?.full_name?.split(" ")[0] ?? "Usuario"
   const nextMed = medications[0]
 
   return (
-    <div className="flex min-h-screen flex-col px-5 pb-8 pt-6">
+    <div className="mx-auto flex min-h-screen max-w-lg flex-col px-5 pb-8 pt-6 sm:px-6 md:max-w-xl">
       {/* Top bar */}
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/15">
-            <span className="text-lg text-primary">✦</span>
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/15 sm:h-12 sm:w-12">
+            <span className="text-lg text-primary sm:text-xl">✦</span>
           </div>
           <div>
-            <p className="text-sm text-muted-foreground">Hola,</p>
-            <p className="text-xl font-bold text-foreground">{firstName}</p>
+            <p className="text-xs text-muted-foreground sm:text-sm">Hola,</p>
+            <p className="text-xl font-bold text-foreground sm:text-2xl">{firstName}</p>
           </div>
         </div>
         <button
-          onClick={() => startTransition(() => signOut())}
-          disabled={isPending}
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--surface-container-high)]"
+          onClick={() => setShowLogout(true)}
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--surface-container-high)] sm:h-11 sm:w-11"
         >
           <LogOut className="h-4 w-4 text-muted-foreground" />
         </button>
@@ -53,7 +53,7 @@ export function RecipientHome({ profile, medications, caregiverName }: Recipient
       {nextMed && (
         <Link
           href={`/dashboard/recipient/medications/${nextMed.id}/confirm`}
-          className="mb-6 block rounded-2xl border border-[var(--outline-variant)]/15 bg-[var(--surface-container-low)] p-5 shadow-sm transition-all active:scale-[0.98]"
+          className="mb-5 block rounded-2xl border border-[var(--outline-variant)]/15 bg-[var(--surface-container-low)] p-5 shadow-sm transition-all active:scale-[0.98] sm:p-6"
         >
           <div className="mb-1 flex items-center justify-between">
             <span className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
@@ -65,46 +65,46 @@ export function RecipientHome({ profile, medications, caregiverName }: Recipient
                 : ""} hs
             </span>
           </div>
-          <h2 className="text-2xl font-bold uppercase tracking-tight text-foreground">
+          <h2 className="text-xl font-bold uppercase tracking-tight text-foreground sm:text-2xl">
             {nextMed.name} {nextMed.dosage}
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">1 Comprimido con agua</p>
-          <div className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-primary py-3.5 text-sm font-bold uppercase tracking-wider text-primary-foreground">
-            <span className="text-lg">✓</span>
+          <div className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-primary py-3 text-sm font-bold uppercase tracking-wider text-primary-foreground sm:py-3.5">
+            <span className="text-base">✓</span>
             Confirmar que lo tomé
           </div>
         </Link>
       )}
 
       {/* 4 action tiles */}
-      <div className="mb-6 grid grid-cols-2 gap-3">
-        <ActionTile
-          href="/dashboard/recipient/alerts"
-          icon={<MessageSquare className="h-7 w-7" />}
-          label="Ver Mensajes"
-          color="text-primary"
-          bg="bg-primary/10"
-        />
+      <div className="mb-5 grid grid-cols-2 gap-3">
         <ActionTile
           href="/dashboard/recipient/medications"
-          icon={<Pill className="h-7 w-7" />}
-          label="Pedir Medicamento"
+          icon={<Pill className="h-6 w-6 sm:h-7 sm:w-7" />}
+          label="Medicamentos"
           color="text-[var(--tertiary)]"
           bg="bg-[var(--tertiary)]/10"
         />
         <ActionTile
+          href="/dashboard/recipient/vitals"
+          icon={<Heart className="h-6 w-6 sm:h-7 sm:w-7" />}
+          label="Mi Salud"
+          color="text-primary"
+          bg="bg-primary/10"
+        />
+        <ActionTile
           href="/dashboard/recipient/qr"
-          icon={<QrCode className="h-7 w-7" />}
+          icon={<QrCode className="h-6 w-6 sm:h-7 sm:w-7" />}
           label="Mi QR Médico"
           color="text-muted-foreground"
           bg="bg-[var(--surface-container-high)]"
         />
         <ActionTile
-          href="/dashboard/recipient/vitals"
-          icon={<Heart className="h-7 w-7" />}
-          label="Mi Salud"
-          color="text-primary/70"
-          bg="bg-primary/5"
+          href="/dashboard/recipient/alerts"
+          icon={<AlertTriangle className="h-6 w-6 sm:h-7 sm:w-7" />}
+          label="Alertas"
+          color="text-destructive"
+          bg="bg-destructive/5"
         />
       </div>
 
@@ -112,12 +112,39 @@ export function RecipientHome({ profile, medications, caregiverName }: Recipient
       <div className="mt-auto">
         <Link
           href="/dashboard/recipient/emergency"
-          className="flex w-full items-center justify-center gap-3 rounded-2xl border-2 border-destructive bg-destructive/5 py-5 text-base font-bold uppercase tracking-wider text-destructive transition-all active:scale-[0.98] active:bg-destructive/10"
+          className="flex w-full items-center justify-center gap-3 rounded-2xl border-2 border-destructive bg-destructive/5 py-4 text-sm font-bold uppercase tracking-wider text-destructive transition-all active:scale-[0.98] active:bg-destructive/10 sm:py-5 sm:text-base"
         >
           <AlertTriangle className="h-5 w-5" />
           Pedir Ayuda — Emergencia
         </Link>
       </div>
+
+      {/* Logout confirmation */}
+      {showLogout && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-foreground/30 px-6 backdrop-blur-sm">
+          <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
+            <h3 className="mb-2 text-lg font-bold text-foreground">¿Cerrar sesión?</h3>
+            <p className="mb-6 text-sm text-muted-foreground">
+              Vas a salir de tu cuenta. Podés volver a entrar cuando quieras.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowLogout(false)}
+                className="flex-1 rounded-xl border border-[var(--outline-variant)] py-3 text-sm font-semibold text-foreground"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={() => startTransition(() => signOut())}
+                disabled={isPending}
+                className="flex-1 rounded-xl bg-destructive py-3 text-sm font-bold text-white"
+              >
+                {isPending ? "Saliendo..." : "Sí, salir"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
@@ -138,12 +165,12 @@ function ActionTile({
   return (
     <Link
       href={href}
-      className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-[var(--outline-variant)]/10 bg-white p-6 shadow-sm transition-all active:scale-[0.97]"
+      className="flex flex-col items-center justify-center gap-2.5 rounded-2xl border border-[var(--outline-variant)]/10 bg-white p-5 shadow-sm transition-all active:scale-[0.97] sm:gap-3 sm:p-6"
     >
-      <div className={`flex h-14 w-14 items-center justify-center rounded-full ${bg} ${color}`}>
+      <div className={`flex h-12 w-12 items-center justify-center rounded-full sm:h-14 sm:w-14 ${bg} ${color}`}>
         {icon}
       </div>
-      <span className="text-center text-sm font-semibold text-foreground">{label}</span>
+      <span className="text-center text-xs font-semibold text-foreground sm:text-sm">{label}</span>
     </Link>
   )
 }

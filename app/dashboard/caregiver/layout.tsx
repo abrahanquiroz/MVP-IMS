@@ -48,12 +48,12 @@ export default async function CaregiverLayout({
     .eq("is_resolved", false)
 
   return (
-    <div className="min-h-screen bg-white pb-24">
+    <div className="min-h-screen bg-[var(--surface-container-low)] pb-24 sm:bg-white">
       <CaregiverTopBar
         user={{ fullName: profile.full_name ?? "Cuidador" }}
         alertCount={count ?? 0}
       />
-      <main className="mx-auto max-w-lg">
+      <main className="mx-auto max-w-lg sm:max-w-xl md:max-w-2xl">
         {children}
       </main>
       <CaregiverBottomNav />

@@ -25,7 +25,7 @@ export function CaregiverTopBar({ user, alertCount = 0 }: TopBarProps) {
 
   return (
     <>
-      <header className="sticky top-0 z-50 flex h-16 w-full items-center justify-between bg-white px-4 sm:px-6">
+      <header className="sticky top-0 z-50 flex h-14 w-full items-center justify-between bg-white px-4 sm:h-16 sm:px-6">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--primary-container)] text-sm font-bold text-[var(--on-primary-container)]">
             {initials}

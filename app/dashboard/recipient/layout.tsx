@@ -41,7 +41,7 @@ export default async function RecipientLayout({
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[var(--surface-container-low)] sm:bg-white">
       {children}
     </div>
   )
