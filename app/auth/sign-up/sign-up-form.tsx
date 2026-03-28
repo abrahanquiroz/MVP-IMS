@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { signUp } from "../actions"
+import { setOAuthRoleIntent, signUp } from "../actions"
 import { useTransition, useState } from "react"
 import { Spinner } from "@/components/ui/spinner"
 import { Stethoscope, UserRound } from "lucide-react"
@@ -43,18 +43,24 @@ export function SignUpForm() {
     setGoogleLoading(true)
     setGoogleError("")
     try {
+      await setOAuthRoleIntent(role)
       const supabase = createClient()
-      const redirectTo = `${window.location.origin}/auth/callback?role=${role}`
+      const redirectTo = `${window.location.origin}/auth/callback`
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo },
+        options: {
+          redirectTo,
+          queryParams: { prompt: "select_account" },
+        },
       })
       if (error) {
-        setGoogleError("Google no está configurado aún. Usa correo y contraseña.")
+        setGoogleError(error.message)
         setGoogleLoading(false)
       }
-    } catch {
-      setGoogleError("Google no está configurado aún. Usa correo y contraseña.")
+    } catch (e) {
+      setGoogleError(
+        e instanceof Error ? e.message : "No se pudo abrir el registro con Google.",
+      )
       setGoogleLoading(false)
     }
   }

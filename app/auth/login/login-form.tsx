@@ -41,14 +41,19 @@ export function LoginForm() {
       const redirectTo = `${window.location.origin}/auth/callback`
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo },
+        options: {
+          redirectTo,
+          queryParams: { prompt: "select_account" },
+        },
       })
       if (error) {
-        setGoogleError("Google no está configurado aún. Usa correo y contraseña.")
+        setGoogleError(error.message)
         setGoogleLoading(false)
       }
-    } catch {
-      setGoogleError("Google no está configurado aún. Usa correo y contraseña.")
+    } catch (e) {
+      setGoogleError(
+        e instanceof Error ? e.message : "No se pudo abrir el inicio con Google.",
+      )
       setGoogleLoading(false)
     }
   }

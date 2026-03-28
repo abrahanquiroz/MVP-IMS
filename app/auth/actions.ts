@@ -1,42 +1,40 @@
 "use server"
 
 import { createClient } from "@/lib/supabase/server"
+import { cookies } from "next/headers"
+import { OAUTH_ROLE_COOKIE } from "@/lib/oauth-role-cookie"
 import { redirect } from "next/navigation"
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-
-async function gotrueCall(path: string, body: Record<string, unknown>) {
-  const res = await fetch(`${SUPABASE_URL}/auth/v1${path}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", apikey: SUPABASE_KEY },
-    body: JSON.stringify(body),
+/** Guarda el rol elegido antes de redirigir a Google (el query ?role= puede perderse en OAuth). */
+export async function setOAuthRoleIntent(role: "caregiver" | "care_recipient") {
+  const store = await cookies()
+  store.set(OAUTH_ROLE_COOKIE, role, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 600,
+    path: "/",
   })
-  const data = await res.json()
-  if (!res.ok) {
-    throw new Error(data.error_description || data.msg || "Error de autenticación")
-  }
-  return data
 }
 
 export async function signIn(formData: FormData) {
-  const email = formData.get("email") as string
+  const email = (formData.get("email") as string)?.trim()
   const password = formData.get("password") as string
 
-  let session: { access_token: string; refresh_token: string; user: { user_metadata?: { role?: string } } }
-  try {
-    session = await gotrueCall("/token?grant_type=password", { email, password })
-  } catch (e) {
-    return redirect(`/auth/login?error=${encodeURIComponent(e instanceof Error ? e.message : "Error al iniciar sesión")}`)
-  }
-
   const supabase = await createClient()
-  await supabase.auth.setSession({
-    access_token: session.access_token,
-    refresh_token: session.refresh_token,
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
   })
 
-  const role = session.user?.user_metadata?.role || "care_recipient"
+  if (error) {
+    return redirect(
+      `/auth/login?error=${encodeURIComponent(error.message)}`,
+    )
+  }
+
+  const role =
+    data.user?.user_metadata?.role ?? "care_recipient"
   if (role === "caregiver") {
     return redirect("/dashboard/caregiver")
   }
@@ -44,29 +42,31 @@ export async function signIn(formData: FormData) {
 }
 
 export async function signUp(formData: FormData) {
-  const email = formData.get("email") as string
+  const email = (formData.get("email") as string)?.trim()
   const password = formData.get("password") as string
-  const fullName = formData.get("full_name") as string
-  const role = formData.get("role") as string
+  const fullName = (formData.get("full_name") as string)?.trim() ?? ""
+  const role = (formData.get("role") as string) || "care_recipient"
 
-  let data: { access_token?: string; refresh_token?: string; user?: { user_metadata?: { role?: string } } }
-  try {
-    data = await gotrueCall("/signup", {
-      email,
-      password,
-      data: { full_name: fullName, role: role || "care_recipient" },
-    })
-  } catch (e) {
-    return redirect(`/auth/sign-up?error=${encodeURIComponent(e instanceof Error ? e.message : "Error al registrarse")}`)
+  const supabase = await createClient()
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        full_name: fullName,
+        role,
+      },
+    },
+  })
+
+  if (error) {
+    return redirect(
+      `/auth/sign-up?error=${encodeURIComponent(error.message)}`,
+    )
   }
 
-  if (data.access_token && data.refresh_token) {
-    const supabase = await createClient()
-    await supabase.auth.setSession({
-      access_token: data.access_token,
-      refresh_token: data.refresh_token,
-    })
-    const userRole = data.user?.user_metadata?.role || "care_recipient"
+  if (data.session) {
+    const userRole = data.user?.user_metadata?.role ?? "care_recipient"
     if (userRole === "caregiver") {
       return redirect("/dashboard/caregiver")
     }
@@ -87,7 +87,9 @@ export async function updateUserRole(role: string) {
   const { error } = await supabase.auth.updateUser({ data: { role } })
   if (error) throw error
 
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
   if (user) {
     await supabase.from("profiles").update({ role }).eq("id", user.id)
   }
