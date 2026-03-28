@@ -6,7 +6,7 @@ import { ChevronLeft, Heart, Thermometer, Droplets, Footprints, Activity } from 
 export default async function RecipientVitalsPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return redirect("/auth/login")
+  if (!user) return redirect("/auth")
 
   const { data: vitals } = await supabase
     .from("health_vitals")

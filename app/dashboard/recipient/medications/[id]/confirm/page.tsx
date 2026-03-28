@@ -1,14 +1,21 @@
 import { createClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
 import { ConfirmMedication } from "./confirm-form"
+import { DemoMedicationConfirmPage } from "@/components/demo/demo-confirm-page"
+import { isWelltrackerDemo } from "@/lib/welltracker-demo"
 
 export default async function ConfirmMedPage(props: {
   params: Promise<{ id: string }>
 }) {
   const { id } = await props.params
+
+  if (isWelltrackerDemo()) {
+    return <DemoMedicationConfirmPage medicationId={id} />
+  }
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return redirect("/auth/login")
+  if (!user) return redirect("/auth")
 
   const { data: med } = await supabase
     .from("medications")

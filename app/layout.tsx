@@ -17,9 +17,13 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "CareLink — Seguimiento de salud",
+  applicationName: "WellTracker",
+  title: {
+    default: "WellTracker — Seguimiento de salud",
+    template: "%s · WellTracker",
+  },
   description:
-    "Cuidado conectado: cuidadores y personas cuidadas en tiempo real.",
+    "WellTracker: cuidado conectado entre cuidadores y personas cuidadas en tiempo real.",
   icons: {
     icon: "/favicon.png",
     apple: "/apple-icon.png",

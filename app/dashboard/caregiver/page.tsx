@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server"
 import { CaregiverOverview } from "@/components/caregiver/overview"
 import { CaregiverEmptyState } from "@/components/caregiver/empty-state"
+import { CaregiverHomeDemo } from "@/components/demo/caregiver-home-demo"
+import { isWelltrackerDemo } from "@/lib/welltracker-demo"
 
 export default async function CaregiverDashboardPage() {
   const supabase = await createClient()
@@ -13,6 +15,12 @@ export default async function CaregiverDashboardPage() {
     .select("full_name")
     .eq("id", user!.id)
     .single()
+
+  if (isWelltrackerDemo()) {
+    return (
+      <CaregiverHomeDemo caregiverName={profile?.full_name?.split(" ")[0] ?? "Cuidador"} />
+    )
+  }
 
   const { data: assignments } = await supabase
     .from("caregiver_assignments")

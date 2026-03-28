@@ -1,5 +1,9 @@
 import { createClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
+import { DashboardAuraShell } from "@/components/dashboard/dashboard-aura-shell"
+import { DemoGate } from "@/components/demo/demo-gate"
+import { DemoBanner } from "@/components/demo/demo-banner"
+import { isWelltrackerDemo } from "@/lib/welltracker-demo"
 
 export default async function RecipientLayout({
   children,
@@ -12,7 +16,7 @@ export default async function RecipientLayout({
   } = await supabase.auth.getUser()
 
   if (!user) {
-    return redirect("/auth/login")
+    return redirect("/auth")
   }
 
   let { data: profile } = await supabase
@@ -40,9 +44,14 @@ export default async function RecipientLayout({
     return redirect("/dashboard/caregiver")
   }
 
+  const demo = isWelltrackerDemo()
+
   return (
-    <div className="min-h-screen bg-[var(--surface-container-low)] sm:bg-white">
-      {children}
-    </div>
+    <DashboardAuraShell>
+      <DemoGate enabled={demo}>
+        {demo && <DemoBanner />}
+        {children}
+      </DemoGate>
+    </DashboardAuraShell>
   )
 }

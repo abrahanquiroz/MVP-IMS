@@ -1,7 +1,13 @@
 import { createClient } from "@/lib/supabase/server"
 import { AlertsView } from "@/components/shared/alerts-view"
+import { CaregiverAlertsDemo } from "@/components/demo/caregiver-alerts-demo"
+import { isWelltrackerDemo } from "@/lib/welltracker-demo"
 
 export default async function CaregiverAlertsPage() {
+  if (isWelltrackerDemo()) {
+    return <CaregiverAlertsDemo />
+  }
+
   const supabase = await createClient()
   const {
     data: { user },

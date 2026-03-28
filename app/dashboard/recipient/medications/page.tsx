@@ -2,11 +2,17 @@ import { createClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import { ChevronLeft, CheckCircle, Clock, AlertCircle } from "lucide-react"
+import { RecipientMedicationsDemo } from "@/components/demo/recipient-medications-demo"
+import { isWelltrackerDemo } from "@/lib/welltracker-demo"
 
 export default async function RecipientMedicationsPage() {
+  if (isWelltrackerDemo()) {
+    return <RecipientMedicationsDemo />
+  }
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return redirect("/auth/login")
+  if (!user) return redirect("/auth")
 
   const [{ data: medications }, { data: logs }] = await Promise.all([
     supabase

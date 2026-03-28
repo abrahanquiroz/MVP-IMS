@@ -23,7 +23,7 @@ export function CaregiverBottomNav() {
   const pathname = usePathname()
 
   return (
-    <nav className="fixed bottom-0 left-0 z-50 flex h-16 w-full items-center justify-around border-t border-[var(--outline)]/10 bg-white/90 px-2 pb-[max(0.25rem,env(safe-area-inset-bottom))] pt-1 backdrop-blur-xl shadow-[0_-4px_20px_rgba(0,0,0,0.05)] sm:h-18 sm:px-4 sm:pt-2">
+    <nav className="fixed bottom-0 left-0 z-50 flex h-16 w-full items-center justify-around border-t border-white/50 bg-white/80 px-2 pb-[max(0.25rem,env(safe-area-inset-bottom))] pt-1 backdrop-blur-xl shadow-[0_-8px_32px_rgba(103,80,164,0.08)] sm:h-18 sm:px-4 sm:pt-2">
       {navItems.map((item) => {
         const isActive =
           item.href === "/dashboard/caregiver"

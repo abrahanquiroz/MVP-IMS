@@ -4,6 +4,7 @@ import Link from "next/link"
 import { signOut } from "@/app/auth/actions"
 import { Pill, QrCode, Heart, AlertTriangle, LogOut, CheckCircle } from "lucide-react"
 import { useTransition, useState } from "react"
+import { AuraCard } from "@/components/dashboard/aura-card"
 
 interface RecipientHomeProps {
   profile: {
@@ -40,15 +41,15 @@ export function RecipientHome({ profile, pendingMedications, allTakenToday }: Re
       {/* Top bar */}
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <img src="/logo-icon.png" alt="WellTracker" className="h-10 w-10 rounded-xl sm:h-12 sm:w-12" />
+          <img src="/logo-icon.png" alt="WellTracker" className="h-10 w-10 rounded-xl shadow-sm sm:h-12 sm:w-12" />
           <div>
-            <p className="text-xs text-muted-foreground sm:text-sm">Hola,</p>
-            <p className="text-xl font-bold text-foreground sm:text-2xl">{firstName}</p>
+            <p className="text-xs text-neutral-600 sm:text-sm">Hola,</p>
+            <p className="text-xl font-bold text-neutral-900 sm:text-2xl">{firstName}</p>
           </div>
         </div>
         <button
           onClick={() => setShowLogout(true)}
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--surface-container-high)] sm:h-11 sm:w-11"
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-white/60 bg-white/80 shadow-sm backdrop-blur-sm sm:h-11 sm:w-11"
         >
           <LogOut className="h-4 w-4 text-muted-foreground" />
         </button>
@@ -56,36 +57,39 @@ export function RecipientHome({ profile, pendingMedications, allTakenToday }: Re
 
       {/* Next medication or "all taken" */}
       {allTakenToday ? (
-        <div className="mb-5 flex flex-col items-center rounded-2xl border border-secondary/20 bg-secondary/5 p-6 text-center shadow-sm">
-          <CheckCircle className="mb-3 h-12 w-12 text-secondary" />
-          <h2 className="text-lg font-bold text-foreground sm:text-xl">¡Estás al día!</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Ya tomaste todos tus medicamentos de hoy.
-          </p>
-        </div>
+        <AuraCard className="mb-5" padding="p-6">
+          <div className="flex flex-col items-center text-center">
+            <CheckCircle className="mb-3 h-12 w-12 text-[#006a60]" />
+            <h2 className="text-lg font-bold text-neutral-900 sm:text-xl">¡Estás al día!</h2>
+            <p className="mt-1 text-sm text-neutral-600">Ya tomaste todos tus medicamentos de hoy.</p>
+          </div>
+        </AuraCard>
       ) : nextMed ? (
         <Link
           href={`/dashboard/recipient/medications/${nextMed.id}/confirm`}
-          className="mb-5 block rounded-2xl border border-[var(--outline-variant)]/15 bg-[var(--surface-container-low)] p-5 shadow-sm transition-all active:scale-[0.98] sm:p-6"
+          className="mb-5 block transition-all active:scale-[0.98]"
         >
-          <div className="mb-1 flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
-              Próximo medicamento
-            </span>
-            <span className="text-sm font-semibold text-primary">
-              {Array.isArray(nextMed.schedule_times) && nextMed.schedule_times.length > 0
-                ? nextMed.schedule_times[0]
-                : ""} hs
-            </span>
-          </div>
-          <h2 className="text-xl font-bold uppercase tracking-tight text-foreground sm:text-2xl">
-            {nextMed.name} {nextMed.dosage}
-          </h2>
-          <p className="mt-1 text-sm text-muted-foreground">1 Comprimido con agua</p>
-          <div className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-primary py-3 text-sm font-bold uppercase tracking-wider text-primary-foreground sm:py-3.5">
-            <span className="text-base">✓</span>
-            Confirmar que lo tomé
-          </div>
+          <AuraCard padding="p-5 sm:p-6">
+            <div className="mb-1 flex items-center justify-between">
+              <span className="text-[11px] font-bold uppercase tracking-widest text-neutral-600">
+                Próximo medicamento
+              </span>
+              <span className="text-sm font-semibold text-[#6750a4]">
+                {Array.isArray(nextMed.schedule_times) && nextMed.schedule_times.length > 0
+                  ? nextMed.schedule_times[0]
+                  : ""}{" "}
+                hs
+              </span>
+            </div>
+            <h2 className="text-xl font-bold uppercase tracking-tight text-neutral-900 sm:text-2xl">
+              {nextMed.name} {nextMed.dosage}
+            </h2>
+            <p className="mt-1 text-sm text-neutral-600">1 Comprimido con agua</p>
+            <div className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-[#6750a4] py-3 text-sm font-bold uppercase tracking-wider text-white sm:py-3.5">
+              <span className="text-base">✓</span>
+              Confirmar que lo tomé
+            </div>
+          </AuraCard>
         </Link>
       ) : null}
 
@@ -159,9 +163,13 @@ function ActionTile({ href, icon, label, color, bg }: {
   href: string; icon: React.ReactNode; label: string; color: string; bg: string
 }) {
   return (
-    <Link href={href} className="flex flex-col items-center justify-center gap-2.5 rounded-2xl border border-[var(--outline-variant)]/10 bg-white p-5 shadow-sm transition-all active:scale-[0.97] sm:gap-3 sm:p-6">
-      <div className={`flex h-12 w-12 items-center justify-center rounded-full sm:h-14 sm:w-14 ${bg} ${color}`}>{icon}</div>
-      <span className="text-center text-xs font-semibold text-foreground sm:text-sm">{label}</span>
+    <Link href={href} className="block transition-all active:scale-[0.97]">
+      <AuraCard className="h-full" padding="p-5 sm:p-6">
+        <div className="flex flex-col items-center justify-center gap-2.5 sm:gap-3">
+          <div className={`flex h-12 w-12 items-center justify-center rounded-full sm:h-14 sm:w-14 ${bg} ${color}`}>{icon}</div>
+          <span className="text-center text-xs font-semibold text-neutral-900 sm:text-sm">{label}</span>
+        </div>
+      </AuraCard>
     </Link>
   )
 }

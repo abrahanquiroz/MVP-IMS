@@ -47,7 +47,7 @@ export async function updateSession(request: NextRequest) {
       request.nextUrl.pathname.startsWith('/protected'))
   ) {
     const url = request.nextUrl.clone()
-    url.pathname = '/auth/login'
+    url.pathname = '/auth'
     return NextResponse.redirect(url)
   }
 

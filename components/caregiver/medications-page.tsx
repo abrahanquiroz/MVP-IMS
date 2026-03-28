@@ -1,6 +1,6 @@
 "use client"
 
-import { CheckCircle, Clock, AlertCircle, Plus } from "lucide-react"
+import { CheckCircle, Clock, AlertCircle, Plus, Trash2 } from "lucide-react"
 import { formatDistanceToNow } from "date-fns"
 import { es } from "date-fns/locale"
 import Link from "next/link"
@@ -9,6 +9,8 @@ interface CaregiverMedicationsPageProps {
   assignments: Record<string, unknown>[]
   medications: Record<string, unknown>[]
   logs: Record<string, unknown>[]
+  demoOnRemoveMed?: (id: string) => void
+  demoOnAddMed?: () => void
 }
 
 type Medication = {
@@ -32,25 +34,40 @@ type MedLog = {
 export function CaregiverMedicationsPage({
   medications,
   logs,
+  demoOnRemoveMed,
+  demoOnAddMed,
 }: CaregiverMedicationsPageProps) {
   const meds = medications as unknown as Medication[]
   const medLogs = logs as unknown as MedLog[]
   const activeMeds = meds.filter((m) => m.is_active)
 
   function getLatestLog(medId: string): MedLog | undefined {
-    return medLogs.find((l) => l.medication_id === medId)
+    return medLogs
+      .filter((l) => l.medication_id === medId)
+      .sort((a, b) => new Date(b.taken_at).getTime() - new Date(a.taken_at).getTime())[0]
   }
 
   return (
     <div className="px-4 pt-4">
       <div className="mb-1 flex items-center justify-between">
         <h1 className="text-xl font-bold text-foreground">Medicación</h1>
-        <Link
-          href="/dashboard/caregiver/patients"
-          className="flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-[var(--surface-container-high)]"
-        >
-          <Plus className="h-5 w-5" />
-        </Link>
+        {demoOnAddMed ? (
+          <button
+            type="button"
+            onClick={demoOnAddMed}
+            className="flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-[var(--surface-container-high)]"
+            aria-label="Agregar medicamento demo"
+          >
+            <Plus className="h-5 w-5" />
+          </button>
+        ) : (
+          <Link
+            href="/dashboard/caregiver/patients"
+            className="flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-[var(--surface-container-high)]"
+          >
+            <Plus className="h-5 w-5" />
+          </Link>
+        )}
       </div>
       <p className="mb-6 text-sm text-muted-foreground">Estado de los medicamentos del paciente</p>
 
@@ -70,20 +87,32 @@ export function CaregiverMedicationsPage({
             return (
               <div
                 key={med.id}
-                className="flex items-center justify-between rounded-2xl border border-[var(--outline-variant)]/10 bg-[var(--surface-container-high)] px-4 py-4"
+                className="flex items-center justify-between gap-2 rounded-2xl border border-[var(--outline-variant)]/10 bg-[var(--surface-container-high)] px-4 py-4"
               >
-                <div className="flex items-center gap-3">
+                <div className="flex min-w-0 flex-1 items-center gap-3">
                   <StatusIcon status={status} />
-                  <div>
+                  <div className="min-w-0">
                     <p className="text-base font-semibold text-foreground">
                       {med.name} {med.dosage}
                     </p>
                     <StatusBadge status={status} logTime={log?.taken_at} />
                   </div>
                 </div>
-                {time && (
-                  <p className="text-sm text-muted-foreground">{time} hs</p>
-                )}
+                <div className="flex shrink-0 items-center gap-2">
+                  {time && (
+                    <p className="text-sm text-muted-foreground">{time} hs</p>
+                  )}
+                  {demoOnRemoveMed && (
+                    <button
+                      type="button"
+                      onClick={() => demoOnRemoveMed(med.id)}
+                      className="flex h-9 w-9 items-center justify-center rounded-full text-destructive transition-colors hover:bg-destructive/10"
+                      aria-label="Quitar demo"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
               </div>
             )
           })}

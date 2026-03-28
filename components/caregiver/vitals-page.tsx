@@ -6,6 +6,7 @@ import { Heart, Thermometer, Droplets, Wind, Activity } from "lucide-react"
 interface CaregiverVitalsPageProps {
   assignments: Record<string, unknown>[]
   vitals: Record<string, unknown>[]
+  demoAddReading?: () => void
 }
 
 type Vital = {
@@ -26,7 +27,7 @@ const CATEGORIES = [
   { key: "steps", label: "Pasos", icon: Activity, color: "text-primary" },
 ]
 
-export function CaregiverVitalsPage({ vitals }: CaregiverVitalsPageProps) {
+export function CaregiverVitalsPage({ vitals, demoAddReading }: CaregiverVitalsPageProps) {
   const [selected, setSelected] = useState("heart_rate")
   const allVitals = vitals as unknown as Vital[]
 
@@ -131,6 +132,16 @@ export function CaregiverVitalsPage({ vitals }: CaregiverVitalsPageProps) {
             </div>
           ))}
         </div>
+      )}
+
+      {demoAddReading && (
+        <button
+          type="button"
+          onClick={demoAddReading}
+          className="mt-6 w-full rounded-full border border-neutral-200 bg-white/90 py-3 text-sm font-semibold text-neutral-800 shadow-sm transition hover:bg-white"
+        >
+          + Registrar lectura demo (pulso)
+        </button>
       )}
     </div>
   )

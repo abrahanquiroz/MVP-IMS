@@ -8,7 +8,7 @@ import { es } from "date-fns/locale"
 export default async function RecipientAppointmentsPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return redirect("/auth/login")
+  if (!user) return redirect("/auth")
 
   const { data: appointments } = await supabase
     .from("appointments")

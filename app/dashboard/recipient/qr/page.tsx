@@ -5,7 +5,7 @@ import { QRView } from "./qr-view"
 export default async function QRPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return redirect("/auth/login")
+  if (!user) return redirect("/auth")
 
   const { data: profile } = await supabase
     .from("profiles")

@@ -5,7 +5,7 @@ import { EmergencyView } from "./emergency-view"
 export default async function EmergencyPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return redirect("/auth/login")
+  if (!user) return redirect("/auth")
 
   const { data: profile } = await supabase
     .from("profiles")

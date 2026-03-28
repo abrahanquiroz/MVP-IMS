@@ -4,6 +4,7 @@ import Link from "next/link"
 import { signOut } from "@/app/auth/actions"
 import { Bell, LogOut } from "lucide-react"
 import { LogoIcon } from "@/components/brand/logo"
+import { useOptionalDemoStore } from "@/components/demo/demo-store"
 import { useTransition, useState } from "react"
 import { format } from "date-fns"
 import { es } from "date-fns/locale"
@@ -14,6 +15,10 @@ interface TopBarProps {
 }
 
 export function CaregiverTopBar({ user, alertCount = 0 }: TopBarProps) {
+  const demo = useOptionalDemoStore()
+  const effectiveAlertCount = demo
+    ? demo.caregiverAlerts.filter((a) => !a.is_resolved).length
+    : alertCount
   const [isPending, startTransition] = useTransition()
   const [showLogout, setShowLogout] = useState(false)
   const today = format(new Date(), "EEEE d 'de' MMMM", { locale: es })
@@ -26,7 +31,7 @@ export function CaregiverTopBar({ user, alertCount = 0 }: TopBarProps) {
 
   return (
     <>
-      <header className="sticky top-0 z-50 flex h-14 w-full items-center justify-between bg-white px-4 sm:h-16 sm:px-6">
+      <header className="sticky top-0 z-50 flex h-14 w-full items-center justify-between border-b border-white/40 bg-white/75 px-4 backdrop-blur-xl sm:h-16 sm:px-6">
         <div className="flex items-center gap-3">
         <LogoIcon size={40} className="rounded-xl" />
           <div>
@@ -39,7 +44,7 @@ export function CaregiverTopBar({ user, alertCount = 0 }: TopBarProps) {
         <div className="flex items-center gap-1">
           <Link href="/dashboard/caregiver/alerts" className="relative rounded-full p-2 text-muted-foreground transition-colors hover:bg-[var(--surface-container-high)] hover:text-foreground">
             <Bell className="h-5 w-5" />
-            {alertCount > 0 && (
+            {effectiveAlertCount > 0 && (
               <span className="absolute right-1.5 top-1.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-[var(--tertiary)]" />
             )}
           </Link>

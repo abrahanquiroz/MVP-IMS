@@ -13,16 +13,24 @@ import { useRouter } from "next/navigation"
 interface AlertsViewProps {
   alerts: Record<string, unknown>[]
   title?: string
+  /** Modo demo: resuelve en memoria sin API */
+  onResolveAlert?: (alertId: string) => void
 }
 
 export function AlertsView({
   alerts,
   title = "Mis alertas",
+  onResolveAlert,
 }: AlertsViewProps) {
   const [isPending, startTransition] = useTransition()
   const router = useRouter()
 
   async function handleResolve(alertId: string) {
+    if (onResolveAlert) {
+      onResolveAlert(alertId)
+      toast.success("Alerta resuelta (demo)")
+      return
+    }
     startTransition(async () => {
       try {
         const res = await fetch("/api/alerts", {

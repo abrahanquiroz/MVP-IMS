@@ -14,6 +14,7 @@ import {
   Settings,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { LogoText } from "@/components/brand/logo"
 import { useTransition } from "react"
 
 interface HeaderProps {
@@ -42,7 +43,7 @@ export function RecipientHeader({ user }: HeaderProps) {
               {user.fullName.charAt(0).toUpperCase()}
             </span>
           </div>
-          <span className="text-xl font-bold tracking-tight text-primary">WellTracker</span>
+          <LogoText className="text-xl" />
         </Link>
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">

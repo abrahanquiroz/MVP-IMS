@@ -11,14 +11,27 @@ interface Props {
   userId: string
   caregiverName: string | null
   alreadyTaken: boolean
+  /** Si está definido, no llama al API y usa solo este callback (modo demo). */
+  demoLogMedication?: (status: "taken" | "skipped") => void
 }
 
-export function ConfirmMedication({ medication, userId, caregiverName, alreadyTaken }: Props) {
+export function ConfirmMedication({
+  medication,
+  userId,
+  caregiverName,
+  alreadyTaken,
+  demoLogMedication,
+}: Props) {
   const [isPending, startTransition] = useTransition()
   const [confirmed, setConfirmed] = useState(alreadyTaken)
   const router = useRouter()
 
   async function logMedication(status: "taken" | "skipped") {
+    if (demoLogMedication) {
+      demoLogMedication(status)
+      if (status === "taken") setConfirmed(true)
+      return
+    }
     startTransition(async () => {
       const res = await fetch("/api/medications/log", {
         method: "POST",

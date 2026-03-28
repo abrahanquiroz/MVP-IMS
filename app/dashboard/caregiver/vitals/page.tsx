@@ -1,7 +1,13 @@
 import { createClient } from "@/lib/supabase/server"
 import { CaregiverVitalsPage } from "@/components/caregiver/vitals-page"
+import { CaregiverVitalsDemo } from "@/components/demo/caregiver-vitals-demo"
+import { isWelltrackerDemo } from "@/lib/welltracker-demo"
 
 export default async function VitalsPage() {
+  if (isWelltrackerDemo()) {
+    return <CaregiverVitalsDemo />
+  }
+
   const supabase = await createClient()
   const {
     data: { user },

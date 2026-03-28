@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useTransition } from "react"
+import { useState, useTransition, useEffect, type ReactNode } from "react"
 import Link from "next/link"
 import { ChevronLeft, Bell, AlertTriangle, Info, Check } from "lucide-react"
 import { formatDistanceToNow } from "date-fns"
@@ -12,11 +12,30 @@ type Alert = {
   alert_type: string; is_resolved: boolean; created_at: string
 }
 
-export function RecipientAlertsList({ initialAlerts }: { initialAlerts: Alert[] }) {
+export function RecipientAlertsList({
+  initialAlerts,
+  demoDismiss,
+  topExtra,
+}: {
+  initialAlerts: Alert[]
+  /** Si se pasa, no llama al API (demo) */
+  demoDismiss?: (alertId: string) => void
+  topExtra?: ReactNode
+}) {
   const [alerts, setAlerts] = useState(initialAlerts)
   const [isPending, startTransition] = useTransition()
 
+  useEffect(() => {
+    setAlerts(initialAlerts)
+  }, [initialAlerts])
+
   function dismiss(alertId: string) {
+    if (demoDismiss) {
+      demoDismiss(alertId)
+      setAlerts((prev) => prev.filter((a) => a.id !== alertId))
+      toast.success("Listo (demo)")
+      return
+    }
     startTransition(async () => {
       const res = await fetch("/api/alerts", {
         method: "PATCH",
@@ -34,6 +53,7 @@ export function RecipientAlertsList({ initialAlerts }: { initialAlerts: Alert[] 
 
   return (
     <div className="mx-auto flex min-h-screen max-w-lg flex-col px-5 pb-8 pt-6 sm:px-6 md:max-w-xl">
+      {topExtra}
       <div className="mb-6 flex items-center gap-3">
         <Link href="/dashboard/recipient" className="flex h-10 w-10 items-center justify-center rounded-full transition-colors hover:bg-[var(--surface-container-high)]">
           <ChevronLeft className="h-5 w-5 text-primary" />

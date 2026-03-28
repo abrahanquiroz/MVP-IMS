@@ -14,7 +14,7 @@ export default function SignUpSuccessPage() {
         </h1>
         <p className="text-muted-foreground mb-8 leading-relaxed">
           Te hemos enviado un enlace de confirmación a tu correo electrónico. Haz
-          clic en el enlace para verificar tu cuenta y comenzar a usar CareLink.
+          clic en el enlace para verificar tu cuenta y comenzar a usar WellTracker.
         </p>
         <Button asChild variant="outline">
           <Link href="/auth/login">Volver a iniciar sesión</Link>
