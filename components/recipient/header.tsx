@@ -33,14 +33,14 @@ export function RecipientHeader({ user }: HeaderProps) {
   const [isPending, startTransition] = useTransition()
 
   return (
-    <header className="sticky top-0 z-40 bg-card border-b border-border/60">
+    <header className="sticky top-0 z-40 border-b border-border/40 bg-background/90 backdrop-blur-md supports-[backdrop-filter]:bg-background/80">
       {/* Top bar */}
-      <div className="flex items-center justify-between px-4 h-16 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+      <div className="mx-auto flex h-14 max-w-4xl items-center justify-between px-4 sm:h-16 sm:px-6 lg:px-8">
         <Link href="/dashboard/recipient" className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary shadow-sm">
             <Heart className="h-5 w-5 text-primary-foreground" />
           </div>
-          <span className="text-xl font-bold text-card-foreground">
+          <span className="font-heading text-lg font-semibold tracking-tight text-foreground sm:text-xl">
             CareLink
           </span>
         </Link>
@@ -69,9 +69,9 @@ export function RecipientHeader({ user }: HeaderProps) {
         </div>
       </div>
 
-      {/* Bottom nav - large touch targets for accessibility */}
-      <nav className="overflow-x-auto border-t border-border/40">
-        <div className="flex items-center gap-1 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+      {/* Bottom nav — móvil: 48px mínimo (Stitch) */}
+      <nav className="overflow-x-auto bg-[var(--stitch-surface-low)]/80">
+        <div className="mx-auto flex max-w-4xl items-center gap-1 px-2 sm:px-6 lg:px-8">
           {navItems.map((item) => {
             const isActive =
               item.href === "/dashboard/recipient"
@@ -82,10 +82,10 @@ export function RecipientHeader({ user }: HeaderProps) {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap min-h-[48px]",
+                  "flex min-h-12 min-w-[44px] items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2.5 text-xs font-medium transition-colors sm:gap-2 sm:px-4 sm:text-sm",
                   isActive
-                    ? "border-primary text-primary"
-                    : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
+                    ? "bg-primary/10 text-primary"
+                    : "text-muted-foreground hover:bg-muted/80 hover:text-foreground"
                 )}
               >
                 <item.icon className="h-4.5 w-4.5" />

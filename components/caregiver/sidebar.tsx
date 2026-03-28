@@ -43,7 +43,7 @@ export function CaregiverSidebar({ user }: SidebarProps) {
       <Button
         variant="ghost"
         size="icon"
-        className="fixed top-3 left-3 z-50 lg:hidden bg-sidebar text-sidebar-foreground"
+        className="fixed top-3 left-3 z-50 min-h-11 min-w-11 rounded-xl border border-sidebar-border bg-sidebar shadow-sm lg:hidden"
         onClick={() => setIsOpen(!isOpen)}
         aria-label="Alternar navegación"
       >
@@ -66,11 +66,11 @@ export function CaregiverSidebar({ user }: SidebarProps) {
         )}
       >
         {/* Logo */}
-        <div className="flex h-16 items-center gap-2.5 px-6 border-b border-sidebar-border">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sidebar-primary">
+        <div className="flex h-16 items-center gap-2.5 border-b border-sidebar-border px-6">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-sidebar-primary shadow-sm">
             <Heart className="h-4.5 w-4.5 text-sidebar-primary-foreground" />
           </div>
-          <span className="text-lg font-bold tracking-tight">CareLink</span>
+          <span className="font-heading text-lg font-semibold tracking-tight">CareLink</span>
         </div>
 
         {/* Nav */}
@@ -87,7 +87,7 @@ export function CaregiverSidebar({ user }: SidebarProps) {
                     href={item.href}
                     onClick={() => setIsOpen(false)}
                     className={cn(
-                      "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                      "flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
                       isActive
                         ? "bg-sidebar-accent text-sidebar-primary"
                         : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"

@@ -1,11 +1,21 @@
 import type { Metadata, Viewport } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
+import { Lexend, Plus_Jakarta_Sans } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { Toaster } from "sonner"
 import "./globals.css"
 
-const _geist = Geist({ subsets: ["latin"] })
-const _geistMono = Geist_Mono({ subsets: ["latin"] })
+const fontBody = Lexend({
+  subsets: ["latin"],
+  variable: "--font-care-body",
+  display: "swap",
+})
+
+const fontDisplay = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  variable: "--font-care-display",
+  display: "swap",
+  weight: ["500", "600", "700"],
+})
 
 export const metadata: Metadata = {
   title: "CareLink - Seguimiento de salud",
@@ -23,7 +33,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: "#0d9488",
+  themeColor: "#1976d2",
   width: "device-width",
   initialScale: 1,
   userScalable: true,
@@ -36,9 +46,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className="font-sans antialiased">
+      <body
+        className={`${fontBody.variable} ${fontDisplay.variable} font-sans antialiased app-shell`}
+      >
         {children}
-        <Toaster position="top-right" richColors />
+        <Toaster position="top-center" richColors />
         <Analytics />
       </body>
     </html>
