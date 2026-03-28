@@ -8,6 +8,7 @@ import {
   useState,
   type ReactNode,
 } from "react"
+import { isRichDemoUser } from "@/lib/demo-rich-user"
 
 export const DEMO_PATIENT_ID = "wt-demo-patient-1"
 
@@ -256,6 +257,435 @@ function initialAppointments(): DemoAppointment[] {
   ]
 }
 
+/** Minutos atrás → ISO */
+function agoMin(m: number) {
+  return new Date(Date.now() - m * 60 * 1000).toISOString()
+}
+
+/** Dataset ampliado para cuentas en `isRichDemoUser` (ej. abrahan@gmail.com). */
+function initialCaregiverAlertsRich(): DemoCaregiverAlert[] {
+  const p = { full_name: "Roberto Gómez" }
+  return [
+    {
+      id: "wt-rich-ca-1",
+      user_id: DEMO_PATIENT_ID,
+      severity: "critical",
+      title: "Revisar: posible evento de caída",
+      message: "El reloj registró un movimiento brusco. Confirmar estado.",
+      alert_type: "fall",
+      is_resolved: false,
+      is_read: false,
+      created_at: agoMin(12),
+      profiles: p,
+    },
+    {
+      id: "wt-rich-ca-2",
+      user_id: DEMO_PATIENT_ID,
+      severity: "warning",
+      title: "Medicación de la mañana sin confirmar",
+      message: "Aún no hay registro de Omeprazol / Metformina.",
+      alert_type: "medication",
+      is_resolved: false,
+      is_read: false,
+      created_at: agoMin(38),
+      profiles: p,
+    },
+    {
+      id: "wt-rich-ca-3",
+      user_id: DEMO_PATIENT_ID,
+      severity: "warning",
+      title: "Glucosa elevada (nota manual)",
+      message: "Lectura 186 mg/dL — seguimiento sugerido.",
+      alert_type: "vital",
+      is_resolved: false,
+      is_read: true,
+      created_at: agoMin(95),
+      profiles: p,
+    },
+    {
+      id: "wt-rich-ca-4",
+      user_id: DEMO_PATIENT_ID,
+      severity: "info",
+      title: "Recordatorio de hidratación",
+      message: "Enviado como aviso suave al paciente.",
+      alert_type: "notification",
+      is_resolved: false,
+      is_read: true,
+      created_at: agoMin(180),
+      profiles: p,
+    },
+    {
+      id: "wt-rich-ca-5",
+      user_id: DEMO_PATIENT_ID,
+      severity: "info",
+      title: "Cita en 48 horas",
+      message: "Traer estudios de laboratorio.",
+      alert_type: "appointment",
+      is_resolved: false,
+      is_read: false,
+      created_at: agoMin(240),
+      profiles: p,
+    },
+    {
+      id: "wt-rich-ca-6",
+      user_id: DEMO_PATIENT_ID,
+      severity: "warning",
+      title: "Stock bajo: Losartán",
+      message: "Quedan pocos comprimidos según el plan.",
+      alert_type: "medication",
+      is_resolved: false,
+      is_read: false,
+      created_at: agoMin(320),
+      profiles: p,
+    },
+    {
+      id: "wt-rich-ca-7",
+      user_id: DEMO_PATIENT_ID,
+      severity: "info",
+      title: "Mensaje del cuidador",
+      message: "\"Llamame cuando termines la merienda\".",
+      alert_type: "notification",
+      is_resolved: false,
+      is_read: false,
+      created_at: agoMin(55),
+      profiles: p,
+    },
+    {
+      id: "wt-rich-ca-8",
+      user_id: DEMO_PATIENT_ID,
+      severity: "warning",
+      title: "Saturación O₂ ligeramente baja",
+      message: "94% en la última lectura — ya revisada por teléfono.",
+      alert_type: "vital",
+      is_resolved: true,
+      is_read: true,
+      created_at: agoMin(2000),
+      profiles: p,
+    },
+    {
+      id: "wt-rich-ca-9",
+      user_id: DEMO_PATIENT_ID,
+      severity: "info",
+      title: "Recordatorio cumplido",
+      message: "Paseo de 10 minutos completado.",
+      alert_type: "notification",
+      is_resolved: true,
+      is_read: true,
+      created_at: agoMin(2600),
+      profiles: p,
+    },
+    {
+      id: "wt-rich-ca-10",
+      user_id: DEMO_PATIENT_ID,
+      severity: "info",
+      title: "Sincronización del reloj OK",
+      message: "Datos vitales actualizados correctamente.",
+      alert_type: "general",
+      is_resolved: true,
+      is_read: true,
+      created_at: agoMin(3000),
+      profiles: p,
+    },
+  ]
+}
+
+function initialRecipientAlertsRich(): DemoRecipientAlert[] {
+  return [
+    {
+      id: "wt-rich-ra-1",
+      title: "Tu cuidador te escribió",
+      message: "Después del almuerzo damos una vuelta a la manzana, ¿dale?",
+      severity: "warning",
+      alert_type: "notification",
+      is_resolved: false,
+      created_at: agoMin(42),
+    },
+    {
+      id: "wt-rich-ra-2",
+      title: "Recordatorio amable",
+      message: "Tomá agua: botella en la mesa de luz.",
+      severity: "info",
+      alert_type: "notification",
+      is_resolved: false,
+      created_at: agoMin(75),
+    },
+    {
+      id: "wt-rich-ra-3",
+      title: "Cita médica",
+      message: "Mañana tenés turno a las 10:00 — llevar carnet y estudios.",
+      severity: "warning",
+      alert_type: "appointment",
+      is_resolved: false,
+      created_at: agoMin(120),
+    },
+    {
+      id: "wt-rich-ra-4",
+      title: "Medicación de la tarde",
+      message: "Cuando suene la alarma, Atenolol con medio vaso de agua.",
+      severity: "info",
+      alert_type: "medication",
+      is_resolved: false,
+      created_at: agoMin(25),
+    },
+    {
+      id: "wt-rich-ra-5",
+      title: "Aviso del sistema",
+      message: "Tu pulso está estable en las últimas 6 horas.",
+      severity: "info",
+      alert_type: "notification",
+      is_resolved: false,
+      created_at: agoMin(200),
+    },
+    {
+      id: "wt-rich-ra-6",
+      title: "Urgente — revisar",
+      message: "Si sentís mareos, tocá el botón de emergencia.",
+      severity: "critical",
+      alert_type: "general",
+      is_resolved: false,
+      created_at: agoMin(8),
+    },
+    {
+      id: "wt-rich-ra-7",
+      title: "Buenas noticias",
+      message: "Todos los signos dentro del rango habitual esta mañana.",
+      severity: "info",
+      alert_type: "notification",
+      is_resolved: false,
+      created_at: agoMin(330),
+    },
+  ]
+}
+
+function initialMedicationsRich(): DemoMedication[] {
+  const pf = { full_name: "Roberto Gómez" }
+  return [
+    {
+      id: "wt-rich-m-1",
+      name: "Metformina",
+      dosage: "500mg",
+      frequency: "Diaria",
+      schedule_times: ["8:00"],
+      is_active: true,
+      user_id: DEMO_PATIENT_ID,
+      profiles: pf,
+    },
+    {
+      id: "wt-rich-m-2",
+      name: "Atenolol",
+      dosage: "25mg",
+      frequency: "Diaria",
+      schedule_times: ["14:00"],
+      is_active: true,
+      user_id: DEMO_PATIENT_ID,
+      profiles: pf,
+    },
+    {
+      id: "wt-rich-m-3",
+      name: "Losartán",
+      dosage: "50mg",
+      frequency: "Diaria",
+      schedule_times: ["20:00"],
+      is_active: true,
+      user_id: DEMO_PATIENT_ID,
+      profiles: pf,
+    },
+    {
+      id: "wt-rich-m-4",
+      name: "Omeprazol",
+      dosage: "20mg",
+      frequency: "Diaria",
+      schedule_times: ["7:30"],
+      is_active: true,
+      user_id: DEMO_PATIENT_ID,
+      profiles: pf,
+    },
+    {
+      id: "wt-rich-m-5",
+      name: "Vitamina D",
+      dosage: "1000 UI",
+      frequency: "Diaria",
+      schedule_times: ["9:00"],
+      is_active: true,
+      user_id: DEMO_PATIENT_ID,
+      profiles: pf,
+    },
+    {
+      id: "wt-rich-m-6",
+      name: "Aspirina",
+      dosage: "100mg",
+      frequency: "Diaria",
+      schedule_times: ["21:00"],
+      is_active: true,
+      user_id: DEMO_PATIENT_ID,
+      profiles: pf,
+    },
+    {
+      id: "wt-rich-m-7",
+      name: "Atorvastatina",
+      dosage: "20mg",
+      frequency: "Diaria",
+      schedule_times: ["22:00"],
+      is_active: true,
+      user_id: DEMO_PATIENT_ID,
+      profiles: pf,
+    },
+  ]
+}
+
+function initialMedLogsRich(): DemoMedLog[] {
+  const t0 = todayStart()
+  return [
+    {
+      id: "wt-rich-log-1",
+      medication_id: "wt-rich-m-1",
+      user_id: DEMO_PATIENT_ID,
+      status: "taken",
+      taken_at: new Date(new Date(t0).getTime() + 45 * 60 * 1000).toISOString(),
+    },
+  ]
+}
+
+function initialVitalsRich(): DemoVital[] {
+  const base = Date.now()
+  const p = { full_name: "Roberto Gómez" }
+  return [
+    {
+      id: "wt-rich-v1",
+      user_id: DEMO_PATIENT_ID,
+      vital_type: "heart_rate",
+      value: 74,
+      unit: "bpm",
+      recorded_at: new Date(base - 4 * 60 * 1000).toISOString(),
+      profiles: p,
+    },
+    {
+      id: "wt-rich-v2",
+      user_id: DEMO_PATIENT_ID,
+      vital_type: "heart_rate",
+      value: 69,
+      unit: "bpm",
+      recorded_at: new Date(base - 95 * 60 * 1000).toISOString(),
+      profiles: p,
+    },
+    {
+      id: "wt-rich-v3",
+      user_id: DEMO_PATIENT_ID,
+      vital_type: "steps",
+      value: 4820,
+      unit: "steps",
+      recorded_at: new Date(base - 6 * 60 * 1000).toISOString(),
+      profiles: p,
+    },
+    {
+      id: "wt-rich-v4",
+      user_id: DEMO_PATIENT_ID,
+      vital_type: "blood_pressure",
+      value: 126,
+      secondary_value: 80,
+      unit: "mmHg",
+      recorded_at: new Date(base - 50 * 60 * 1000).toISOString(),
+      profiles: p,
+    },
+    {
+      id: "wt-rich-v5",
+      user_id: DEMO_PATIENT_ID,
+      vital_type: "blood_pressure",
+      value: 132,
+      secondary_value: 84,
+      unit: "mmHg",
+      recorded_at: new Date(base - 400 * 60 * 1000).toISOString(),
+      profiles: p,
+    },
+    {
+      id: "wt-rich-v6",
+      user_id: DEMO_PATIENT_ID,
+      vital_type: "blood_oxygen",
+      value: 96,
+      unit: "%",
+      recorded_at: new Date(base - 18 * 60 * 1000).toISOString(),
+      profiles: p,
+    },
+    {
+      id: "wt-rich-v7",
+      user_id: DEMO_PATIENT_ID,
+      vital_type: "temperature",
+      value: 36.5,
+      unit: "°C",
+      recorded_at: new Date(base - 22 * 60 * 1000).toISOString(),
+      profiles: p,
+    },
+    {
+      id: "wt-rich-v8",
+      user_id: DEMO_PATIENT_ID,
+      vital_type: "temperature",
+      value: 36.7,
+      unit: "°C",
+      recorded_at: new Date(base - 600 * 60 * 1000).toISOString(),
+      profiles: p,
+    },
+  ]
+}
+
+function initialAppointmentsRich(): DemoAppointment[] {
+  const pf = { full_name: "Roberto Gómez" }
+  const a = new Date()
+  const d1 = new Date(a)
+  d1.setDate(d1.getDate() + 1)
+  d1.setHours(10, 30, 0, 0)
+  const d2 = new Date(a)
+  d2.setDate(d2.getDate() + 3)
+  d2.setHours(9, 0, 0, 0)
+  const d3 = new Date(a)
+  d3.setDate(d3.getDate() + 7)
+  d3.setHours(16, 15, 0, 0)
+  return [
+    {
+      id: "wt-rich-ap-1",
+      user_id: DEMO_PATIENT_ID,
+      title: "Control cardiológico",
+      doctor_name: "Dra. Martínez",
+      location: "Sanatorio Central · Piso 2",
+      appointment_date: d1.toISOString(),
+      profiles: pf,
+    },
+    {
+      id: "wt-rich-ap-2",
+      user_id: DEMO_PATIENT_ID,
+      title: "Laboratorio (ayunas)",
+      doctor_name: "—",
+      location: "DiagnoSur · Sucursal Centro",
+      appointment_date: d2.toISOString(),
+      profiles: pf,
+    },
+    {
+      id: "wt-rich-ap-3",
+      user_id: DEMO_PATIENT_ID,
+      title: "Kinesiología",
+      doctor_name: "Lic. Fernández",
+      location: "Consultorios WellTracker",
+      appointment_date: d3.toISOString(),
+      profiles: pf,
+    },
+  ]
+}
+
+function cloneInitialRich(): DemoStoreSnapshot {
+  return {
+    assignments: initialAssignments(),
+    caregiverAlerts: initialCaregiverAlertsRich(),
+    recipientAlerts: initialRecipientAlertsRich(),
+    medications: initialMedicationsRich(),
+    medicationLogs: initialMedLogsRich(),
+    vitals: initialVitalsRich(),
+    appointments: initialAppointmentsRich(),
+  }
+}
+
+export function getInitialDemoSnapshot(userEmail?: string | null): DemoStoreSnapshot {
+  return isRichDemoUser(userEmail) ? cloneInitialRich() : cloneInitial()
+}
+
 export type DemoStoreSnapshot = {
   assignments: ReturnType<typeof initialAssignments>
   caregiverAlerts: DemoCaregiverAlert[]
@@ -299,8 +729,14 @@ type DemoContextValue = DemoStoreSnapshot & {
 
 const DemoStoreContext = createContext<DemoContextValue | null>(null)
 
-export function DemoStoreProvider({ children }: { children: ReactNode }) {
-  const [snap, setSnap] = useState<DemoStoreSnapshot>(() => cloneInitial())
+export function DemoStoreProvider({
+  children,
+  userEmail,
+}: {
+  children: ReactNode
+  userEmail?: string | null
+}) {
+  const [snap, setSnap] = useState<DemoStoreSnapshot>(() => getInitialDemoSnapshot(userEmail))
 
   const resolveCaregiverAlert = useCallback((id: string) => {
     setSnap((s) => ({

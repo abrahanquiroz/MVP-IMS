@@ -55,7 +55,7 @@ export default async function CaregiverLayout({
 
   return (
     <DashboardAuraShell>
-      <DemoGate enabled={demo}>
+      <DemoGate enabled={demo} userEmail={user.email}>
         {demo && <DemoBanner />}
         <CaregiverTopBar
           user={{ fullName: profile.full_name ?? "Cuidador" }}

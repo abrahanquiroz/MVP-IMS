@@ -48,7 +48,7 @@ export default async function RecipientLayout({
 
   return (
     <DashboardAuraShell>
-      <DemoGate enabled={demo}>
+      <DemoGate enabled={demo} userEmail={user.email}>
         {demo && <DemoBanner />}
         {children}
       </DemoGate>
