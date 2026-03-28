@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { signOut } from "@/app/auth/actions"
-import { Pill, QrCode, Heart, AlertTriangle, LogOut } from "lucide-react"
+import { Pill, QrCode, Heart, AlertTriangle, LogOut, CheckCircle } from "lucide-react"
 import { useTransition, useState } from "react"
 
 interface RecipientHomeProps {
@@ -19,14 +19,21 @@ interface RecipientHomeProps {
     dosage: string
     schedule_times: string[]
   }[]
+  pendingMedications: {
+    id: string
+    name: string
+    dosage: string
+    schedule_times: string[]
+  }[]
+  allTakenToday: boolean
   caregiverName: string | null
 }
 
-export function RecipientHome({ profile, medications }: RecipientHomeProps) {
+export function RecipientHome({ profile, pendingMedications, allTakenToday }: RecipientHomeProps) {
   const [isPending, startTransition] = useTransition()
   const [showLogout, setShowLogout] = useState(false)
   const firstName = profile?.full_name?.split(" ")[0] ?? "Usuario"
-  const nextMed = medications[0]
+  const nextMed = pendingMedications[0]
 
   return (
     <div className="mx-auto flex min-h-screen max-w-lg flex-col px-5 pb-8 pt-6 sm:px-6 md:max-w-xl">
@@ -49,8 +56,16 @@ export function RecipientHome({ profile, medications }: RecipientHomeProps) {
         </button>
       </div>
 
-      {/* Next medication card */}
-      {nextMed && (
+      {/* Next medication or "all taken" */}
+      {allTakenToday ? (
+        <div className="mb-5 flex flex-col items-center rounded-2xl border border-secondary/20 bg-secondary/5 p-6 text-center shadow-sm">
+          <CheckCircle className="mb-3 h-12 w-12 text-secondary" />
+          <h2 className="text-lg font-bold text-foreground sm:text-xl">¡Estás al día!</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Ya tomaste todos tus medicamentos de hoy.
+          </p>
+        </div>
+      ) : nextMed ? (
         <Link
           href={`/dashboard/recipient/medications/${nextMed.id}/confirm`}
           className="mb-5 block rounded-2xl border border-[var(--outline-variant)]/15 bg-[var(--surface-container-low)] p-5 shadow-sm transition-all active:scale-[0.98] sm:p-6"
@@ -74,7 +89,7 @@ export function RecipientHome({ profile, medications }: RecipientHomeProps) {
             Confirmar que lo tomé
           </div>
         </Link>
-      )}
+      ) : null}
 
       {/* 4 action tiles */}
       <div className="mb-5 grid grid-cols-2 gap-3">
@@ -128,17 +143,10 @@ export function RecipientHome({ profile, medications }: RecipientHomeProps) {
               Vas a salir de tu cuenta. Podés volver a entrar cuando quieras.
             </p>
             <div className="flex gap-3">
-              <button
-                onClick={() => setShowLogout(false)}
-                className="flex-1 rounded-xl border border-[var(--outline-variant)] py-3 text-sm font-semibold text-foreground"
-              >
+              <button onClick={() => setShowLogout(false)} className="flex-1 rounded-xl border border-[var(--outline-variant)] py-3 text-sm font-semibold text-foreground">
                 Cancelar
               </button>
-              <button
-                onClick={() => startTransition(() => signOut())}
-                disabled={isPending}
-                className="flex-1 rounded-xl bg-destructive py-3 text-sm font-bold text-white"
-              >
+              <button onClick={() => startTransition(() => signOut())} disabled={isPending} className="flex-1 rounded-xl bg-destructive py-3 text-sm font-bold text-white">
                 {isPending ? "Saliendo..." : "Sí, salir"}
               </button>
             </div>
@@ -149,27 +157,12 @@ export function RecipientHome({ profile, medications }: RecipientHomeProps) {
   )
 }
 
-function ActionTile({
-  href,
-  icon,
-  label,
-  color,
-  bg,
-}: {
-  href: string
-  icon: React.ReactNode
-  label: string
-  color: string
-  bg: string
+function ActionTile({ href, icon, label, color, bg }: {
+  href: string; icon: React.ReactNode; label: string; color: string; bg: string
 }) {
   return (
-    <Link
-      href={href}
-      className="flex flex-col items-center justify-center gap-2.5 rounded-2xl border border-[var(--outline-variant)]/10 bg-white p-5 shadow-sm transition-all active:scale-[0.97] sm:gap-3 sm:p-6"
-    >
-      <div className={`flex h-12 w-12 items-center justify-center rounded-full sm:h-14 sm:w-14 ${bg} ${color}`}>
-        {icon}
-      </div>
+    <Link href={href} className="flex flex-col items-center justify-center gap-2.5 rounded-2xl border border-[var(--outline-variant)]/10 bg-white p-5 shadow-sm transition-all active:scale-[0.97] sm:gap-3 sm:p-6">
+      <div className={`flex h-12 w-12 items-center justify-center rounded-full sm:h-14 sm:w-14 ${bg} ${color}`}>{icon}</div>
       <span className="text-center text-xs font-semibold text-foreground sm:text-sm">{label}</span>
     </Link>
   )

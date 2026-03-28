@@ -31,6 +31,7 @@ export default async function QRPage() {
 
   return (
     <QRView
+      userId={user.id}
       profile={{
         fullName: profile?.full_name ?? "Paciente",
         age: profile?.age ?? null,

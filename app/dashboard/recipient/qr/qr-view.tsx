@@ -1,9 +1,11 @@
 "use client"
 
 import Link from "next/link"
-import { AlertTriangle, Activity, Phone, QrCode } from "lucide-react"
+import { AlertTriangle, Activity, Phone, Pill } from "lucide-react"
+import { QRCodeSVG } from "qrcode.react"
 
 interface Props {
+  userId: string
   profile: {
     fullName: string
     age: number | null
@@ -15,15 +17,18 @@ interface Props {
   medications: { name: string; dosage: string; frequency: string }[]
 }
 
-export function QRView({ profile, caregiverName, medications }: Props) {
+export function QRView({ userId, profile, caregiverName, medications }: Props) {
+  const origin = typeof window !== "undefined" ? window.location.origin : ""
+  const qrUrl = `${origin}/emergency/${userId}`
+
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="mx-auto flex min-h-screen max-w-lg flex-col sm:max-w-xl">
       {/* Red header */}
       <div className="flex items-center justify-center bg-destructive py-3 text-sm font-bold uppercase tracking-widest text-white">
         ✦ Mis datos de emergencia
       </div>
 
-      <div className="flex-1 px-6 pb-8 pt-6">
+      <div className="flex-1 px-5 pb-8 pt-6 sm:px-6">
         {/* Top bar */}
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -42,10 +47,16 @@ export function QRView({ profile, caregiverName, medications }: Props) {
           {profile.bloodType ? ` · ${profile.bloodType}` : ""}
         </p>
 
-        {/* QR placeholder */}
+        {/* QR real */}
         <div className="mx-auto mb-2 flex w-fit flex-col items-center rounded-2xl border border-[var(--outline-variant)]/20 bg-white p-6 shadow-md">
-          <div className="flex h-44 w-44 items-center justify-center rounded-xl bg-[var(--surface-container-high)]">
-            <QrCode className="h-20 w-20 text-muted-foreground/50" />
+          <div className="rounded-xl bg-white p-3">
+            <QRCodeSVG
+              value={qrUrl}
+              size={176}
+              level="M"
+              bgColor="#ffffff"
+              fgColor="#1c1b1f"
+            />
           </div>
           <p className="mt-3 text-sm text-muted-foreground">
             ✦ Escaneá para ver todo
@@ -66,11 +77,27 @@ export function QRView({ profile, caregiverName, medications }: Props) {
         {profile.conditions.map((c) => (
           <div key={c} className="mt-3 flex items-center gap-3 rounded-xl border-l-4 border-[var(--tertiary)] bg-[var(--tertiary)]/5 px-4 py-3">
             <Activity className="h-5 w-5 shrink-0 text-[var(--tertiary)]" />
-            <span className="text-base font-semibold text-[var(--on-tertiary-container)]">
-              {c}
-            </span>
+            <span className="text-base font-semibold text-[var(--on-tertiary-container)]">{c}</span>
           </div>
         ))}
+
+        {/* Medications */}
+        {medications.length > 0 && (
+          <div className="mt-6">
+            <h3 className="mb-3 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+              Medicamentos
+            </h3>
+            {medications.map((m) => (
+              <div key={m.name} className="mb-2 flex items-center gap-3 rounded-xl bg-[var(--surface-container-low)] px-4 py-3">
+                <Pill className="h-4 w-4 shrink-0 text-primary" />
+                <div>
+                  <p className="text-sm font-semibold text-foreground">{m.name} {m.dosage}</p>
+                  <p className="text-xs text-muted-foreground">{m.frequency}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Caregiver contact */}
         {caregiverName && (
@@ -82,9 +109,7 @@ export function QRView({ profile, caregiverName, medications }: Props) {
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary/15">
                 <Phone className="h-4 w-4 text-secondary" />
               </div>
-              <div>
-                <p className="text-lg font-bold text-foreground">{caregiverName}</p>
-              </div>
+              <p className="text-lg font-bold text-foreground">{caregiverName}</p>
             </div>
           </div>
         )}
