@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
-import { CaregiverSidebar } from "@/components/caregiver/sidebar"
+import { CaregiverTopBar } from "@/components/caregiver/top-bar"
+import { CaregiverBottomNav } from "@/components/caregiver/bottom-nav"
 
 export default async function CaregiverLayout({
   children,
@@ -41,14 +42,21 @@ export default async function CaregiverLayout({
     return redirect("/dashboard/recipient")
   }
 
+  const { count } = await supabase
+    .from("health_alerts")
+    .select("*", { count: "exact", head: true })
+    .eq("is_resolved", false)
+
   return (
-    <div className="flex h-screen overflow-hidden bg-white">
-      <CaregiverSidebar
-        user={{ id: user.id, email: user.email ?? "", fullName: profile.full_name ?? "Cuidador" }}
+    <div className="min-h-screen bg-white pb-24">
+      <CaregiverTopBar
+        user={{ fullName: profile.full_name ?? "Cuidador" }}
+        alertCount={count ?? 0}
       />
-      <main className="flex-1 overflow-y-auto text-foreground">
+      <main className="mx-auto max-w-lg">
         {children}
       </main>
+      <CaregiverBottomNav />
     </div>
   )
 }
