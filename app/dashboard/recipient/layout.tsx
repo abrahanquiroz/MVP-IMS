@@ -1,6 +1,5 @@
 import { createClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
-import { RecipientHeader } from "@/components/recipient/header"
 
 export default async function RecipientLayout({
   children,
@@ -22,7 +21,6 @@ export default async function RecipientLayout({
     .eq("id", user.id)
     .single()
 
-  // Auto-create profile if trigger didn't fire or query failed
   if (!profile) {
     const meta = user.user_metadata ?? {}
     await supabase.from("profiles").upsert({
@@ -44,16 +42,7 @@ export default async function RecipientLayout({
 
   return (
     <div className="min-h-screen bg-white">
-      <RecipientHeader
-        user={{
-          id: user.id,
-          email: user.email ?? "",
-          fullName: profile?.full_name ?? "Usuario",
-        }}
-      />
-      <main className="mx-auto max-w-4xl px-4 pb-28 pt-20 sm:px-6 lg:px-8">
-        {children}
-      </main>
+      {children}
     </div>
   )
 }

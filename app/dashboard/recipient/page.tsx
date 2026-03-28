@@ -1,56 +1,38 @@
 import { createClient } from "@/lib/supabase/server"
-import { RecipientOverview } from "@/components/recipient/overview"
+import { RecipientHome } from "@/components/recipient/home"
 
 export default async function RecipientDashboardPage() {
   const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const { data: { user } } = await supabase.auth.getUser()
 
-  const [
-    { data: medications },
-    { data: alerts },
-    { data: appointments },
-    { data: vitals },
-    { data: profile },
-  ] = await Promise.all([
-    supabase
-      .from("medications")
-      .select("*")
-      .eq("user_id", user!.id)
-      .eq("is_active", true)
-      .order("name"),
-    supabase
-      .from("health_alerts")
-      .select("*")
-      .eq("user_id", user!.id)
-      .eq("is_resolved", false)
-      .order("created_at", { ascending: false })
-      .limit(5),
-    supabase
-      .from("appointments")
-      .select("*")
-      .eq("user_id", user!.id)
-      .eq("status", "scheduled")
-      .gte("appointment_date", new Date().toISOString())
-      .order("appointment_date", { ascending: true })
-      .limit(3),
-    supabase
-      .from("health_vitals")
-      .select("*")
-      .eq("user_id", user!.id)
-      .order("recorded_at", { ascending: false })
-      .limit(6),
-    supabase.from("profiles").select("*").eq("id", user!.id).single(),
-  ])
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user!.id)
+    .single()
+
+  const { data: medications } = await supabase
+    .from("medications")
+    .select("*")
+    .eq("user_id", user!.id)
+    .eq("is_active", true)
+    .order("name")
+
+  const { data: assignment } = await supabase
+    .from("caregiver_assignments")
+    .select("*, caregiver:profiles!caregiver_assignments_caregiver_id_fkey(full_name)")
+    .eq("care_recipient_id", user!.id)
+    .eq("status", "active")
+    .limit(1)
+    .single()
 
   return (
-    <RecipientOverview
+    <RecipientHome
       profile={profile}
       medications={medications ?? []}
-      alerts={alerts ?? []}
-      appointments={appointments ?? []}
-      vitals={vitals ?? []}
+      caregiverName={
+        (assignment?.caregiver as { full_name?: string })?.full_name ?? null
+      }
     />
   )
 }
