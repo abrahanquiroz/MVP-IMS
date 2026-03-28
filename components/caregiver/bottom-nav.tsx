@@ -7,7 +7,7 @@ import {
   Home,
   Activity,
   Pill,
-  MapPin,
+  Send,
   Bell,
 } from "lucide-react"
 
@@ -15,7 +15,7 @@ const navItems = [
   { href: "/dashboard/caregiver", label: "Inicio", icon: Home },
   { href: "/dashboard/caregiver/vitals", label: "Salud", icon: Activity },
   { href: "/dashboard/caregiver/medications", label: "Medicación", icon: Pill },
-  { href: "/dashboard/caregiver/patients", label: "Ubicación", icon: MapPin },
+  { href: "/dashboard/caregiver/notify", label: "Notificar", icon: Send },
   { href: "/dashboard/caregiver/alerts", label: "Alertas", icon: Bell },
 ]
 

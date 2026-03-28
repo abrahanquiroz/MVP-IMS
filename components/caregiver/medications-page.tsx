@@ -1,15 +1,9 @@
 "use client"
 
-import { useState } from "react"
-import { MedicationsView } from "@/components/shared/medications-view"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Label } from "@/components/ui/label"
+import { CheckCircle, Clock, AlertCircle, Plus } from "lucide-react"
+import { formatDistanceToNow } from "date-fns"
+import { es } from "date-fns/locale"
+import Link from "next/link"
 
 interface CaregiverMedicationsPageProps {
   assignments: Record<string, unknown>[]
@@ -17,73 +11,146 @@ interface CaregiverMedicationsPageProps {
   logs: Record<string, unknown>[]
 }
 
+type Medication = {
+  id: string
+  name: string
+  dosage: string
+  frequency: string
+  schedule_times: string[]
+  is_active: boolean
+  user_id: string
+  profiles?: { full_name?: string }
+}
+
+type MedLog = {
+  id: string
+  medication_id: string
+  status: "taken" | "skipped" | "missed"
+  taken_at: string
+}
+
 export function CaregiverMedicationsPage({
-  assignments,
   medications,
   logs,
 }: CaregiverMedicationsPageProps) {
-  const [selectedPatient, setSelectedPatient] = useState<string>("all")
+  const meds = medications as unknown as Medication[]
+  const medLogs = logs as unknown as MedLog[]
+  const activeMeds = meds.filter((m) => m.is_active)
 
-  const filteredMeds =
-    selectedPatient === "all"
-      ? medications
-      : medications.filter(
-          (m) => (m as { user_id: string }).user_id === selectedPatient
-        )
-
-  const filteredLogs =
-    selectedPatient === "all"
-      ? logs
-      : logs.filter(
-          (l) => (l as { user_id: string }).user_id === selectedPatient
-        )
-
-  const selectedAssignment = assignments.find(
-    (a) =>
-      (a as { care_recipient_id: string }).care_recipient_id === selectedPatient
-  )
-  const patientName =
-    selectedAssignment && selectedPatient !== "all"
-      ? ((selectedAssignment as { care_recipient?: { full_name?: string } })
-          .care_recipient?.full_name ?? "Paciente")
-      : undefined
+  function getLatestLog(medId: string): MedLog | undefined {
+    return medLogs.find((l) => l.medication_id === medId)
+  }
 
   return (
-    <div className="p-6 lg:p-8">
-      <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:gap-4">
-        <div className="flex flex-col gap-2">
-          <Label>Filtrar por paciente</Label>
-          <Select value={selectedPatient} onValueChange={setSelectedPatient}>
-            <SelectTrigger className="w-[240px]">
-              <SelectValue placeholder="Todos los pacientes" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todos los pacientes</SelectItem>
-              {assignments.map((a) => {
-                const assignment = a as {
-                  care_recipient_id: string
-                  care_recipient?: { full_name?: string }
-                }
-                return (
-                  <SelectItem
-                    key={assignment.care_recipient_id}
-                    value={assignment.care_recipient_id}
-                  >
-                    {assignment.care_recipient?.full_name ?? "Paciente"}
-                  </SelectItem>
-                )
-              })}
-            </SelectContent>
-          </Select>
-        </div>
+    <div className="px-4 pt-4">
+      <div className="mb-1 flex items-center justify-between">
+        <h1 className="text-xl font-bold text-foreground">Medicación</h1>
+        <Link
+          href="/dashboard/caregiver/patients"
+          className="flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-[var(--surface-container-high)]"
+        >
+          <Plus className="h-5 w-5" />
+        </Link>
       </div>
-      <MedicationsView
-        medications={filteredMeds}
-        logs={filteredLogs}
-        userId={selectedPatient === "all" ? "" : selectedPatient}
-        canManage={selectedPatient !== "all"}
-        patientName={patientName}
-      />
+      <p className="mb-6 text-sm text-muted-foreground">Estado de los medicamentos del paciente</p>
+
+      {activeMeds.length === 0 ? (
+        <div className="flex flex-col items-center py-16 text-center">
+          <p className="text-sm text-muted-foreground">No hay medicamentos registrados.</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {activeMeds.map((med) => {
+            const log = getLatestLog(med.id)
+            const status = log?.status
+            const time = Array.isArray(med.schedule_times) && med.schedule_times[0]
+              ? med.schedule_times[0]
+              : ""
+
+            return (
+              <div
+                key={med.id}
+                className="flex items-center justify-between rounded-2xl border border-[var(--outline-variant)]/10 bg-[var(--surface-container-high)] px-4 py-4"
+              >
+                <div className="flex items-center gap-3">
+                  <StatusIcon status={status} />
+                  <div>
+                    <p className="text-base font-semibold text-foreground">
+                      {med.name} {med.dosage}
+                    </p>
+                    <StatusBadge status={status} logTime={log?.taken_at} />
+                  </div>
+                </div>
+                {time && (
+                  <p className="text-sm text-muted-foreground">{time} hs</p>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      {/* Stock warning placeholder */}
+      {activeMeds.length > 0 && (
+        <div className="mt-6 rounded-xl border-l-4 border-[var(--tertiary)] bg-[var(--tertiary)]/5 px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="h-5 w-5 text-[var(--tertiary)]" />
+              <p className="text-sm font-medium text-[var(--tertiary)]">
+                {activeMeds[0].name} — verificar stock
+              </p>
+            </div>
+            <span className="text-xs font-semibold text-[var(--tertiary)]">Gestionar →</span>
+          </div>
+        </div>
+      )}
     </div>
+  )
+}
+
+function StatusIcon({ status }: { status?: string }) {
+  if (status === "taken") {
+    return (
+      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary/15">
+        <CheckCircle className="h-5 w-5 text-secondary" />
+      </div>
+    )
+  }
+  if (status === "skipped" || status === "missed") {
+    return (
+      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--tertiary)]/15">
+        <AlertCircle className="h-5 w-5 text-[var(--tertiary)]" />
+      </div>
+    )
+  }
+  return (
+    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--outline-variant)]/20">
+      <Clock className="h-5 w-5 text-muted-foreground" />
+    </div>
+  )
+}
+
+function StatusBadge({ status, logTime }: { status?: string; logTime?: string }) {
+  if (status === "taken") {
+    return (
+      <span className="inline-flex items-center rounded-full border border-secondary/20 bg-secondary/10 px-2 py-0.5 text-xs font-medium text-secondary">
+        Tomado {logTime ? formatDistanceToNow(new Date(logTime), { addSuffix: true, locale: es }) : ""}
+      </span>
+    )
+  }
+  if (status === "skipped" || status === "missed") {
+    return (
+      <div className="flex items-center gap-2">
+        <span className="inline-flex rounded-full border border-[var(--tertiary)]/20 bg-[var(--tertiary)]/10 px-2 py-0.5 text-xs font-medium text-[var(--tertiary)]">
+          Pendiente
+        </span>
+        <span className="text-[10px] font-bold uppercase tracking-wider text-primary">Recordar</span>
+      </div>
+    )
+  }
+  return (
+    <span className="inline-flex rounded-full border border-[var(--outline-variant)]/20 bg-[var(--outline-variant)]/10 px-2 py-0.5 text-xs font-medium text-muted-foreground">
+      Próximo
+    </span>
   )
 }
