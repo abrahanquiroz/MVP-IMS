@@ -1,6 +1,6 @@
 "use client"
 
-import { useTransition } from "react"
+import { useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { Pill, CheckCircle, XCircle, Clock } from "lucide-react"
@@ -10,10 +10,12 @@ interface Props {
   medication: { id: string; name: string; dosage: string; schedule_times: string[] }
   userId: string
   caregiverName: string | null
+  alreadyTaken: boolean
 }
 
-export function ConfirmMedication({ medication, userId, caregiverName }: Props) {
+export function ConfirmMedication({ medication, userId, caregiverName, alreadyTaken }: Props) {
   const [isPending, startTransition] = useTransition()
+  const [confirmed, setConfirmed] = useState(alreadyTaken)
   const router = useRouter()
 
   async function logMedication(status: "taken" | "skipped") {
@@ -28,8 +30,13 @@ export function ConfirmMedication({ medication, userId, caregiverName }: Props) 
         }),
       })
       if (res.ok) {
-        toast.success(status === "taken" ? "Registrado como tomado" : "Registrado como omitido")
-        router.push("/dashboard/recipient")
+        if (status === "taken") {
+          setConfirmed(true)
+          toast.success("Registrado como tomado")
+        } else {
+          toast.info("Registrado como omitido")
+        }
+        setTimeout(() => router.push("/dashboard/recipient"), 1200)
       } else {
         toast.error("Error al registrar")
       }
@@ -39,7 +46,7 @@ export function ConfirmMedication({ medication, userId, caregiverName }: Props) 
   const time = medication.schedule_times?.[0] ?? ""
 
   return (
-    <div className="flex min-h-screen flex-col px-6 pb-8 pt-6">
+    <div className="mx-auto flex min-h-screen max-w-lg flex-col px-6 pb-8 pt-6 sm:px-6 md:max-w-xl">
       {/* Top bar */}
       <div className="mb-8 flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -53,18 +60,18 @@ export function ConfirmMedication({ medication, userId, caregiverName }: Props) 
 
       {/* Pill icon */}
       <div className="mb-6 flex justify-center">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-          <Pill className="h-8 w-8 text-primary" />
+        <div className={`flex h-16 w-16 items-center justify-center rounded-full ${confirmed ? "bg-secondary/15" : "bg-primary/10"}`}>
+          {confirmed ? <CheckCircle className="h-8 w-8 text-secondary" /> : <Pill className="h-8 w-8 text-primary" />}
         </div>
       </div>
 
-      <h1 className="mb-8 text-center text-2xl font-bold text-foreground">
-        ¿Tomaste este medicamento?
+      <h1 className="mb-8 text-center text-xl font-bold text-foreground sm:text-2xl">
+        {confirmed ? "¡Ya tomaste este medicamento!" : "¿Tomaste este medicamento?"}
       </h1>
 
       {/* Medication card */}
-      <div className="mb-10 rounded-xl border-l-4 border-primary bg-[var(--surface-container-low)] p-5">
-        <h2 className="text-2xl font-bold uppercase tracking-tight text-foreground">
+      <div className={`mb-10 rounded-xl border-l-4 p-5 ${confirmed ? "border-secondary bg-secondary/5" : "border-primary bg-[var(--surface-container-low)]"}`}>
+        <h2 className="text-xl font-bold uppercase tracking-tight text-foreground sm:text-2xl">
           {medication.name} {medication.dosage}
         </h2>
         <div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
@@ -74,37 +81,41 @@ export function ConfirmMedication({ medication, userId, caregiverName }: Props) 
       </div>
 
       <div className="mt-auto space-y-3">
-        {/* Confirm */}
-        <button
-          onClick={() => logMedication("taken")}
-          disabled={isPending}
-          className="flex w-full items-center justify-center gap-3 rounded-xl bg-secondary py-4 text-base font-bold uppercase tracking-wider text-secondary-foreground transition-all active:scale-[0.98]"
-        >
-          <CheckCircle className="h-5 w-5" />
-          Sí, lo tomé
-        </button>
-
-        {/* Skip */}
-        <button
-          onClick={() => logMedication("skipped")}
-          disabled={isPending}
-          className="flex w-full items-center justify-center gap-3 rounded-xl border border-[var(--outline-variant)]/30 bg-[var(--surface-container-low)] py-4 text-base font-semibold text-muted-foreground transition-all active:scale-[0.98]"
-        >
-          <XCircle className="h-5 w-5" />
-          No lo tomé
-        </button>
-
-        {/* Remind */}
-        <button
-          onClick={() => {
-            toast.info("Te recordaremos en 15 minutos")
-            router.push("/dashboard/recipient")
-          }}
-          className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-[var(--outline-variant)]/30 py-4 text-sm font-medium text-muted-foreground"
-        >
-          <Clock className="h-4 w-4" />
-          Recordarme en 15 min
-        </button>
+        {confirmed ? (
+          <div className="flex w-full items-center justify-center gap-3 rounded-xl bg-secondary/10 py-4 text-base font-bold uppercase tracking-wider text-secondary">
+            <CheckCircle className="h-5 w-5" />
+            Confirmado
+          </div>
+        ) : (
+          <>
+            <button
+              onClick={() => logMedication("taken")}
+              disabled={isPending}
+              className="flex w-full items-center justify-center gap-3 rounded-xl bg-secondary py-4 text-base font-bold uppercase tracking-wider text-secondary-foreground transition-all active:scale-[0.98] disabled:opacity-50"
+            >
+              <CheckCircle className="h-5 w-5" />
+              Sí, lo tomé
+            </button>
+            <button
+              onClick={() => logMedication("skipped")}
+              disabled={isPending}
+              className="flex w-full items-center justify-center gap-3 rounded-xl border border-[var(--outline-variant)]/30 bg-[var(--surface-container-low)] py-4 text-base font-semibold text-muted-foreground transition-all active:scale-[0.98] disabled:opacity-50"
+            >
+              <XCircle className="h-5 w-5" />
+              No lo tomé
+            </button>
+            <button
+              onClick={() => {
+                toast.info("Te recordaremos en 15 minutos")
+                router.push("/dashboard/recipient")
+              }}
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-[var(--outline-variant)]/30 py-4 text-sm font-medium text-muted-foreground"
+            >
+              <Clock className="h-4 w-4" />
+              Recordarme en 15 min
+            </button>
+          </>
+        )}
 
         {caregiverName && (
           <p className="mt-2 text-center text-sm text-muted-foreground">

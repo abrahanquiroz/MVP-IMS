@@ -28,6 +28,19 @@ export default async function ConfirmMedPage(props: {
 
   const caregiverName = (assignment?.caregiver as { full_name?: string })?.full_name ?? null
 
+  const todayStart = new Date()
+  todayStart.setHours(0, 0, 0, 0)
+
+  const { data: todayLog } = await supabase
+    .from("medication_logs")
+    .select("id, status")
+    .eq("medication_id", id)
+    .eq("user_id", user.id)
+    .gte("taken_at", todayStart.toISOString())
+    .order("taken_at", { ascending: false })
+    .limit(1)
+    .single()
+
   return (
     <ConfirmMedication
       medication={{
@@ -38,6 +51,7 @@ export default async function ConfirmMedPage(props: {
       }}
       userId={user.id}
       caregiverName={caregiverName}
+      alreadyTaken={todayLog?.status === "taken"}
     />
   )
 }
