@@ -8,6 +8,7 @@ import { useTransition, useState } from "react"
 import { Spinner } from "@/components/ui/spinner"
 import { createClient } from "@/lib/supabase/client"
 import { mapOAuthProviderError } from "@/lib/auth-oauth-errors"
+import { Mail, Lock } from "lucide-react"
 
 function GoogleIcon({ className }: { className?: string }) {
   return (
@@ -63,66 +64,85 @@ export function LoginForm() {
 
   return (
     <div className="flex flex-col gap-5">
-      <Button
-        type="button"
-        variant="outline"
-        className="w-full h-11 gap-3 text-sm font-medium"
-        onClick={handleGoogleSignIn}
-        disabled={googleLoading}
-      >
-        {googleLoading ? <Spinner className="h-5 w-5" /> : <GoogleIcon className="h-5 w-5" />}
-        Continuar con Google
-      </Button>
-
-      <p className="text-xs text-muted-foreground text-center">
-        Google sirve para cuidadores que ya se registraron con Google. Las personas cuidadas
-        inician sesión con el correo y contraseña que les dio su cuidador.
-      </p>
-
-      {googleError && (
-        <p className="text-sm text-center text-amber-600 bg-amber-50 dark:bg-amber-950/30 dark:text-amber-400 rounded-lg p-2.5">
-          {googleError}
-        </p>
-      )}
-
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t" />
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">o</span>
-        </div>
-      </div>
-
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="email">Correo electrónico</Label>
-          <Input
-            id="email"
-            name="email"
-            type="email"
-            placeholder="tu@ejemplo.com"
-            required
-            autoComplete="email"
-          />
+        <div className="space-y-1.5">
+          <Label htmlFor="email" className="px-1 text-[11px] font-semibold uppercase tracking-wider text-[#cac4d4]">
+            Email
+          </Label>
+          <div className="relative">
+            <Mail className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-[#cac4d4]" />
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="nombre@ejemplo.com"
+              required
+              autoComplete="email"
+              className="pl-10"
+            />
+          </div>
         </div>
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="password">Contraseña</Label>
-          <Input
-            id="password"
-            name="password"
-            type="password"
-            placeholder="Tu contraseña"
-            required
-            autoComplete="current-password"
-            minLength={6}
-          />
+        <div className="space-y-1.5">
+          <div className="flex items-end justify-between px-1">
+            <Label htmlFor="password" className="text-[11px] font-semibold uppercase tracking-wider text-[#cac4d4]">
+              Contraseña
+            </Label>
+            <span className="text-[13px] font-medium text-[#cebdff]/80">Olvidé mi contraseña</span>
+          </div>
+          <div className="relative">
+            <Lock className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-[#cac4d4]" />
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              placeholder="••••••••"
+              required
+              autoComplete="current-password"
+              minLength={6}
+              className="pl-10"
+            />
+          </div>
         </div>
-        <Button type="submit" disabled={isPending} className="w-full mt-2">
+        <Button type="submit" disabled={isPending} className="mt-2 w-full py-3.5">
           {isPending ? <Spinner className="mr-2" /> : null}
           Iniciar sesión
         </Button>
       </form>
+
+      <div className="relative my-2">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t border-[#494552]/15" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-[#222a3d] px-3 text-[11px] font-bold tracking-widest text-[#cac4d4]">
+            o
+          </span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <Button
+          type="button"
+          variant="outline"
+          className="h-11 gap-2 text-xs font-semibold"
+          onClick={handleGoogleSignIn}
+          disabled={googleLoading}
+        >
+          {googleLoading ? <Spinner className="h-5 w-5" /> : <GoogleIcon className="h-5 w-5" />}
+          Google
+        </Button>
+      </div>
+
+      <p className="text-center text-xs leading-relaxed text-[#cac4d4]/90">
+        Google: para cuidadores que se registraron con Google. Personas cuidadas: correo y
+        contraseña que les dio su cuidador.
+      </p>
+
+      {googleError && (
+        <p className="rounded-lg bg-[#ffb95f]/10 p-2.5 text-center text-sm text-[#ffb95f]">
+          {googleError}
+        </p>
+      )}
     </div>
   )
 }

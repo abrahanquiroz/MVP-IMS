@@ -43,7 +43,7 @@ export default async function RecipientLayout({
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-obsidian-mesh">
       <RecipientHeader
         user={{
           id: user.id,
@@ -51,7 +51,7 @@ export default async function RecipientLayout({
           fullName: profile?.full_name ?? "Usuario",
         }}
       />
-      <main className="mx-auto max-w-4xl px-4 py-6 pb-24 sm:px-6 sm:pb-8 lg:px-8">
+      <main className="mx-auto max-w-4xl px-4 pb-28 pt-20 sm:px-6 lg:px-8">
         {children}
       </main>
     </div>

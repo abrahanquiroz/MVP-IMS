@@ -1,5 +1,4 @@
 import Link from "next/link"
-import { Heart } from "lucide-react"
 import { LoginForm } from "./login-form"
 
 export default async function LoginPage(props: {
@@ -7,62 +6,51 @@ export default async function LoginPage(props: {
 }) {
   const searchParams = await props.searchParams
   return (
-    <div className="flex min-h-screen">
-      <div className="hidden lg:flex lg:w-1/2 bg-primary items-center justify-center p-12">
-        <div className="max-w-md text-primary-foreground">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-foreground/20">
-              <Heart className="h-7 w-7 text-primary-foreground" />
-            </div>
-            <span className="text-2xl font-bold tracking-tight">CareLink</span>
-          </div>
-          <h1 className="text-4xl font-bold leading-tight mb-4 text-balance">
-            Un mejor cuidado comienza con una mejor conexión
-          </h1>
-          <p className="text-primary-foreground/80 text-lg leading-relaxed">
-            Controla signos vitales, gestiona medicamentos y mantente conectado
-            con tu equipo de cuidado, todo en un solo lugar.
-          </p>
-        </div>
+    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-[#0b1326] px-6 py-10 text-[#dae2fd]">
+      <div className="pointer-events-none absolute inset-0 z-0">
+        <div className="absolute left-[-10%] top-[-10%] h-[40%] w-[40%] rounded-full bg-[#cebdff]/10 blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] h-[40%] w-[40%] rounded-full bg-[#44e2cd]/5 blur-[120px]" />
       </div>
 
-      <div className="flex flex-1 items-center justify-center p-6 lg:p-12">
-        <div className="w-full max-w-sm">
-          <div className="flex items-center gap-2 mb-8 lg:hidden">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
-              <Heart className="h-5 w-5 text-primary-foreground" />
-            </div>
-            <span className="text-xl font-bold text-foreground">CareLink</span>
+      <div className="relative z-10 w-full max-w-md">
+        <header className="mb-10 flex flex-col items-center">
+          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[#cebdff] shadow-lg shadow-[#a78bfa]/20">
+            <span className="text-2xl font-bold text-[#381385]">C</span>
           </div>
+          <h1 className="text-xl font-semibold tracking-tight text-[#cebdff]">CareLink</h1>
+        </header>
 
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-foreground mb-2">
-              Bienvenido de nuevo
-            </h2>
-            <p className="text-muted-foreground">
-              Inicia sesión en tu cuenta para continuar
-            </p>
+        <div className="mb-8 text-center">
+          <h2 className="text-[22px] font-semibold leading-tight text-[#dae2fd]">
+            Bienvenido de vuelta
+          </h2>
+          <p className="mt-1 text-sm text-[#cac4d4]">Ingresá para ver a tu familiar</p>
+        </div>
+
+        {searchParams.error && (
+          <div className="mb-6 rounded-lg border border-[#ffb4ab]/30 bg-[#93000a]/20 p-3 text-sm text-[#ffdad6]">
+            {searchParams.error}
           </div>
+        )}
 
-          {searchParams.error && (
-            <div className="mb-6 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
-              {searchParams.error}
-            </div>
-          )}
-
+        <div className="relative overflow-hidden rounded-[14px] border border-[#494552]/15 bg-[#222a3d] p-6 shadow-2xl">
           <LoginForm />
-
-          <p className="mt-6 text-center text-sm text-muted-foreground">
-            {"¿No tienes cuenta? "}
-            <Link
-              href="/auth/sign-up"
-              className="font-medium text-primary hover:underline"
-            >
-              Regístrate
-            </Link>
-          </p>
         </div>
+
+        <p className="mt-8 text-center text-[13px] text-[#cac4d4]">
+          ¿No tenés cuenta?{" "}
+          <Link href="/auth/sign-up" className="font-semibold text-[#cebdff] hover:underline">
+            Crear cuenta
+          </Link>
+        </p>
+        <p className="mt-4 text-center text-[13px] text-[#cac4d4]">
+          ¿Sos la persona cuidada? Usá el correo y la contraseña que te dio tu cuidador.
+        </p>
       </div>
+
+      <p className="pointer-events-none absolute bottom-8 text-[10px] font-medium uppercase tracking-[0.2em] text-[#948e9d]/40">
+        Vigilant Obsidian Care Interface
+      </p>
     </div>
   )
 }

@@ -1,26 +1,25 @@
 import type { Metadata, Viewport } from "next"
-import { Lexend, Plus_Jakarta_Sans } from "next/font/google"
+import { Geist, Geist_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { Toaster } from "sonner"
 import "./globals.css"
 
-const fontBody = Lexend({
+const geistSans = Geist({
   subsets: ["latin"],
-  variable: "--font-care-body",
+  variable: "--font-geist-sans",
   display: "swap",
 })
 
-const fontDisplay = Plus_Jakarta_Sans({
+const geistMono = Geist_Mono({
   subsets: ["latin"],
-  variable: "--font-care-display",
+  variable: "--font-geist-mono",
   display: "swap",
-  weight: ["500", "600", "700"],
 })
 
 export const metadata: Metadata = {
-  title: "CareLink - Seguimiento de salud",
+  title: "CareLink — Seguimiento de salud",
   description:
-    "Plataforma integral de seguimiento de salud que conecta cuidadores y personas cuidadas para mejores resultados de salud.",
+    "Cuidado conectado: cuidadores y personas cuidadas. Inspirado en flujos de salud móvil tipo WellTracker.",
   generator: "CareLink",
   icons: {
     icon: [
@@ -33,7 +32,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: "#1976d2",
+  themeColor: "#0b1326",
   width: "device-width",
   initialScale: 1,
   userScalable: true,
@@ -45,12 +44,12 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es">
+    <html lang="es" className="dark">
       <body
-        className={`${fontBody.variable} ${fontDisplay.variable} font-sans antialiased app-shell`}
+        className={`${geistSans.variable} ${geistMono.variable} font-sans app-shell selection:bg-primary/30`}
       >
         {children}
-        <Toaster position="top-center" richColors />
+        <Toaster position="top-center" richColors theme="dark" />
         <Analytics />
       </body>
     </html>

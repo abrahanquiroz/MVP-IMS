@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { signOut } from "@/app/auth/actions"
 import {
-  Heart,
   LayoutDashboard,
   Activity,
   Pill,
@@ -22,8 +21,8 @@ interface HeaderProps {
 
 const navItems = [
   { href: "/dashboard/recipient", label: "Inicio", icon: LayoutDashboard },
-  { href: "/dashboard/recipient/vitals", label: "Mis signos vitales", icon: Activity },
-  { href: "/dashboard/recipient/medications", label: "Medicamentos", icon: Pill },
+  { href: "/dashboard/recipient/vitals", label: "Salud", icon: Activity },
+  { href: "/dashboard/recipient/medications", label: "Medicación", icon: Pill },
   { href: "/dashboard/recipient/appointments", label: "Citas", icon: CalendarDays },
   { href: "/dashboard/recipient/alerts", label: "Alertas", icon: Bell },
 ]
@@ -33,20 +32,17 @@ export function RecipientHeader({ user }: HeaderProps) {
   const [isPending, startTransition] = useTransition()
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border/40 bg-background/90 backdrop-blur-md supports-[backdrop-filter]:bg-background/80">
-      {/* Top bar */}
-      <div className="mx-auto flex h-14 max-w-4xl items-center justify-between px-4 sm:h-16 sm:px-6 lg:px-8">
-        <Link href="/dashboard/recipient" className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary shadow-sm">
-            <Heart className="h-5 w-5 text-primary-foreground" />
+    <>
+      <header className="fixed top-0 z-50 flex h-16 w-full items-center justify-between border-b border-[#494552]/20 bg-[#131b2e] px-4 shadow-[0_40px_40px_10px_rgba(0,0,0,0.35)] sm:px-6">
+        <Link href="/dashboard/recipient" className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#a78bfa] monogram-glow">
+            <span className="text-sm font-extrabold text-[#3c1989]">C</span>
           </div>
-          <span className="font-heading text-lg font-semibold tracking-tight text-foreground sm:text-xl">
-            CareLink
-          </span>
+          <span className="text-lg font-bold tracking-tight text-[#cebdff]">CareLink</span>
         </Link>
-        <div className="flex items-center gap-3">
-          <span className="hidden sm:inline text-sm text-muted-foreground">
-            Hola, {user.fullName.split(" ")[0]}
+        <div className="flex items-center gap-2">
+          <span className="hidden max-w-[120px] truncate text-xs text-[#cac4d4] sm:inline">
+            {user.fullName.split(" ")[0]}
           </span>
           <form
             action={() => {
@@ -60,41 +56,43 @@ export function RecipientHeader({ user }: HeaderProps) {
               variant="ghost"
               size="sm"
               disabled={isPending}
-              className="text-muted-foreground"
+              className="h-9 text-[#cac4d4] hover:bg-[#222a3d] hover:text-[#dae2fd]"
             >
-              <LogOut className="h-4 w-4 mr-1.5" />
-              <span className="hidden sm:inline">Cerrar sesión</span>
+              <LogOut className="mr-1 h-4 w-4" />
+              <span className="hidden sm:inline">Salir</span>
             </Button>
           </form>
         </div>
-      </div>
+      </header>
 
-      {/* Bottom nav — móvil: 48px mínimo (Stitch) */}
-      <nav className="overflow-x-auto bg-[var(--stitch-surface-low)]/80">
-        <div className="mx-auto flex max-w-4xl items-center gap-1 px-2 sm:px-6 lg:px-8">
-          {navItems.map((item) => {
-            const isActive =
-              item.href === "/dashboard/recipient"
-                ? pathname === "/dashboard/recipient"
-                : pathname.startsWith(item.href)
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "flex min-h-12 min-w-[44px] items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2.5 text-xs font-medium transition-colors sm:gap-2 sm:px-4 sm:text-sm",
-                  isActive
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:bg-muted/80 hover:text-foreground"
-                )}
-              >
-                <item.icon className="h-4.5 w-4.5" />
+      <nav className="fixed bottom-0 left-0 z-50 flex min-h-[4.5rem] w-full items-center justify-around border-t border-[#494552]/15 bg-[#0b1326]/60 px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur-xl shadow-[0_-10px_40px_rgba(0,0,0,0.4)] sm:px-4">
+        {navItems.map((item) => {
+          const isActive =
+            item.href === "/dashboard/recipient"
+              ? pathname === "/dashboard/recipient"
+              : pathname.startsWith(item.href)
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                "flex min-h-[44px] min-w-[44px] flex-col items-center justify-center rounded-lg px-2 py-1 transition-all active:scale-90",
+                isActive
+                  ? "bg-[#a78bfa]/15 text-[#cebdff]"
+                  : "text-[#cac4d4]/70 hover:text-[#cebdff]"
+              )}
+            >
+              <item.icon
+                className={cn("h-5 w-5", isActive && "text-[#cebdff]")}
+                strokeWidth={isActive ? 2.25 : 1.75}
+              />
+              <span className="mt-0.5 max-w-[4.5rem] truncate text-[10px] font-medium uppercase tracking-wide">
                 {item.label}
-              </Link>
-            )
-          })}
-        </div>
+              </span>
+            </Link>
+          )
+        })}
       </nav>
-    </header>
+    </>
   )
 }

@@ -4,64 +4,63 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Design system: Stitch «USO DEMO» — The Empathetic Guardian (app médica móvil).
- * Tipografía: Plus Jakarta Sans (titulares), Lexend (cuerpo y UI).
- * Superficies: tonos fríos #f7f9fc → #ffffff, primario confianza #1976d2.
+ * CareLink — WellTracker / Vigilant Obsidian (referencia de diseño compartida).
+ * Superficie #0b1326, primario violeta #cebdff → #a78bfa, acento salud #44e2cd.
  */
 
 :root {
-  --background: #f7f9fc;
-  --foreground: #191c1e;
-  --card: #ffffff;
-  --card-foreground: #191c1e;
-  --popover: #ffffff;
-  --popover-foreground: #191c1e;
-  --primary: #1976d2;
-  --primary-foreground: #ffffff;
-  --secondary: #eceef1;
-  --secondary-foreground: #191c1e;
-  --muted: #f2f4f7;
-  --muted-foreground: #414752;
-  --accent: #e6e8eb;
-  --accent-foreground: #191c1e;
-  --destructive: #ba1a1a;
-  --destructive-foreground: #ffffff;
-  --border: color-mix(in srgb, #c1c6d4 45%, transparent);
-  --input: #e0e3e6;
-  --ring: #1976d2;
-  --chart-1: #1976d2;
-  --chart-2: #43a047;
-  --chart-3: #ff8a65;
-  --chart-4: #005dac;
-  --chart-5: #98f994;
-  --radius: 0.75rem;
+  --background: #0b1326;
+  --foreground: #dae2fd;
+  --card: #222a3d;
+  --card-foreground: #dae2fd;
+  --popover: #222a3d;
+  --popover-foreground: #dae2fd;
+  --primary: #a78bfa;
+  --primary-foreground: #3c1989;
+  --primary-text: #cebdff;
+  --secondary: #44e2cd;
+  --secondary-foreground: #003731;
+  --muted: #131b2e;
+  --muted-foreground: #cac4d4;
+  --accent: #171f33;
+  --accent-foreground: #dae2fd;
+  --destructive: #ffb4ab;
+  --destructive-foreground: #690005;
+  --border: color-mix(in srgb, #494552 35%, transparent);
+  --input: #131b2e;
+  --ring: #a78bfa;
+  --chart-1: #cebdff;
+  --chart-2: #44e2cd;
+  --chart-3: #ffb95f;
+  --chart-4: #a78bfa;
+  --chart-5: #03c6b2;
+  --radius: 0.5rem;
 
-  --sidebar: #ffffff;
-  --sidebar-foreground: #191c1e;
-  --sidebar-primary: #1976d2;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #eceef1;
-  --sidebar-accent-foreground: #005dac;
-  --sidebar-border: #e0e3e6;
-  --sidebar-ring: #1976d2;
+  --sidebar: #131b2e;
+  --sidebar-foreground: #dae2fd;
+  --sidebar-primary: #a78bfa;
+  --sidebar-primary-foreground: #3c1989;
+  --sidebar-accent: #222a3d;
+  --sidebar-accent-foreground: #cebdff;
+  --sidebar-border: color-mix(in srgb, #494552 40%, transparent);
+  --sidebar-ring: #a78bfa;
 
-  --success: #98f994;
-  --success-foreground: #0c7521;
-  --warning: #ffb59e;
-  --warning-foreground: #3a0b00;
-  --critical: #ba1a1a;
-  --critical-foreground: #ffffff;
+  --success: #44e2cd;
+  --success-foreground: #003731;
+  --warning: #ffb95f;
+  --warning-foreground: #472a00;
+  --critical: #ffb4ab;
+  --critical-foreground: #690005;
 
-  /* Tokens Stitch directos (útiles en componentes) */
-  --stitch-primary-deep: #005dac;
-  --stitch-surface-low: #f2f4f7;
-  --stitch-surface-container: #eceef1;
+  --surface-container: #171f33;
+  --surface-container-high: #222a3d;
+  --surface-bright: #31394d;
+  --outline-variant: #494552;
 }
 
 @theme inline {
-  --font-sans: var(--font-care-body), ui-sans-serif, system-ui, sans-serif;
-  --font-heading: var(--font-care-display), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: ui-monospace, monospace;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -87,9 +86,9 @@
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
   --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --radius-md: var(--radius);
+  --radius-lg: 0.75rem;
+  --radius-xl: 0.875rem;
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -111,28 +110,42 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
   }
   h1,
   h2,
   h3,
   h4 {
-    font-family: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
     letter-spacing: -0.02em;
   }
 }
 
-/* Mobile: viewport estable y área segura (Stitch móvil 390px) */
 @layer utilities {
+  .bg-obsidian-gradient {
+    background: radial-gradient(circle at top right, #131b2e, #0b1326);
+  }
+  .bg-obsidian-mesh {
+    background-color: #0b1326;
+    background-image:
+      radial-gradient(at 0% 0%, rgba(206, 189, 255, 0.08) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(68, 226, 205, 0.06) 0px, transparent 45%);
+  }
+  .monogram-glow {
+    box-shadow: 0 0 30px rgba(167, 139, 250, 0.35);
+  }
+  .glass-overlay {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background: rgba(19, 27, 46, 0.6);
+  }
+  .cta-gradient {
+    background: linear-gradient(135deg, #cebdff 0%, #a78bfa 100%);
+  }
   .app-shell {
     min-height: 100dvh;
-    padding-left: env(safe-area-inset-left, 0);
-    padding-right: env(safe-area-inset-right, 0);
+    min-height: max(884px, 100dvh);
   }
   .safe-bottom {
-    padding-bottom: max(16px, env(safe-area-inset-bottom));
-  }
-  .stitch-gradient-hero {
-    background: linear-gradient(135deg, #005dac 0%, #1976d2 100%);
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
   }
 }

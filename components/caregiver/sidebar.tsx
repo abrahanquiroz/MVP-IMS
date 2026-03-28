@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { signOut } from "@/app/auth/actions"
 import {
-  Heart,
   LayoutDashboard,
   Activity,
   Pill,
@@ -67,10 +66,10 @@ export function CaregiverSidebar({ user }: SidebarProps) {
       >
         {/* Logo */}
         <div className="flex h-16 items-center gap-2.5 border-b border-sidebar-border px-6">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-sidebar-primary shadow-sm">
-            <Heart className="h-4.5 w-4.5 text-sidebar-primary-foreground" />
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#a78bfa] monogram-glow">
+            <span className="text-sm font-extrabold text-[#3c1989]">C</span>
           </div>
-          <span className="font-heading text-lg font-semibold tracking-tight">CareLink</span>
+          <span className="text-lg font-semibold tracking-tight text-[#cebdff]">CareLink</span>
         </div>
 
         {/* Nav */}
@@ -105,7 +104,7 @@ export function CaregiverSidebar({ user }: SidebarProps) {
         {/* User */}
         <div className="border-t border-sidebar-border p-4">
           <div className="flex items-center gap-3 mb-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-sidebar-primary text-sm font-semibold text-sidebar-primary-foreground">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#222a3d] text-sm font-semibold text-[#cebdff] ring-1 ring-[#494552]/40">
               {user.fullName.charAt(0).toUpperCase()}
             </div>
             <div className="min-w-0 flex-1">

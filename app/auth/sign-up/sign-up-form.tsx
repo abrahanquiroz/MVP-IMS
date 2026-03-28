@@ -65,13 +65,13 @@ export function SignUpForm() {
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="rounded-xl border border-primary/25 bg-primary/5 p-4 flex gap-3">
-        <Stethoscope className="h-9 w-9 shrink-0 text-primary" />
-        <div className="text-sm text-muted-foreground leading-relaxed">
-          <p className="font-medium text-foreground">Registro solo para cuidadores</p>
+      <div className="flex gap-3 rounded-xl border border-[#a78bfa]/25 bg-[#a78bfa]/10 p-4">
+        <Stethoscope className="h-9 w-9 shrink-0 text-[#cebdff]" />
+        <div className="text-sm leading-relaxed text-[#cac4d4]">
+          <p className="font-medium text-[#dae2fd]">Registro solo para cuidadores</p>
           <p className="mt-1">
-            Las cuentas de <strong>persona cuidada</strong> las crea tu cuidador desde el panel
-            (pacientes), con correo y contraseña.
+            Las cuentas de <strong className="text-[#dae2fd]">persona cuidada</strong> las crea tu
+            cuidador desde el panel (pacientes), con correo y contraseña.
           </p>
         </div>
       </div>
@@ -88,7 +88,7 @@ export function SignUpForm() {
       </Button>
 
       {googleError && (
-        <p className="text-sm text-center text-amber-600 bg-amber-50 dark:bg-amber-950/30 dark:text-amber-400 rounded-lg p-2.5">
+        <p className="rounded-lg bg-[#ffb95f]/10 p-2.5 text-center text-sm text-[#ffb95f]">
           {googleError}
         </p>
       )}
@@ -98,7 +98,7 @@ export function SignUpForm() {
           <span className="w-full border-t" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">o con correo electrónico</span>
+          <span className="bg-[#0b1326] px-2 text-[#cac4d4]">o con correo electrónico</span>
         </div>
       </div>
 
