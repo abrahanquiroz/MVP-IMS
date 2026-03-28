@@ -5,7 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin"
 import { revalidatePath } from "next/cache"
 
 export type CreateRecipientResult =
-  | { ok: true }
+  | { ok: true; recipientName: string }
   | { ok: false; error: string }
 
 export async function createCareRecipientAccount(
@@ -14,6 +14,13 @@ export async function createCareRecipientAccount(
   const fullName = (formData.get("full_name") as string)?.trim() ?? ""
   const email = (formData.get("email") as string)?.trim().toLowerCase() ?? ""
   const password = formData.get("password") as string
+  const age = formData.get("age") ? Number(formData.get("age")) : null
+  const bloodType = (formData.get("blood_type") as string)?.trim() || null
+  const allergies = (formData.get("allergies") as string)?.trim() || null
+  const conditionsRaw = formData.get("conditions") as string
+  const conditions = conditionsRaw
+    ? conditionsRaw.split(",").map((c) => c.trim()).filter(Boolean)
+    : []
 
   if (!fullName || !email || !password) {
     return { ok: false, error: "Completa nombre, correo y contraseña." }
@@ -73,6 +80,15 @@ export async function createCareRecipientAccount(
 
   const recipientId = created.user.id
 
+  if (age || bloodType || allergies || conditions.length > 0) {
+    await admin.from("profiles").update({
+      age,
+      blood_type: bloodType,
+      allergies,
+      medical_conditions: conditions.length > 0 ? conditions : null,
+    }).eq("id", recipientId)
+  }
+
   const { error: assignErr } = await supabase.from("caregiver_assignments").insert({
     caregiver_id: caregiver.id,
     care_recipient_id: recipientId,
@@ -87,6 +103,7 @@ export async function createCareRecipientAccount(
     }
   }
 
+  revalidatePath("/dashboard/caregiver")
   revalidatePath("/dashboard/caregiver/patients")
-  return { ok: true }
+  return { ok: true, recipientName: fullName }
 }

@@ -13,6 +13,7 @@ import { formatDistanceToNow, format } from "date-fns"
 import { es } from "date-fns/locale"
 
 interface CaregiverOverviewProps {
+  caregiverName: string
   assignments: Record<string, unknown>[]
   recentAlerts: Record<string, unknown>[]
   upcomingAppointments: Record<string, unknown>[]
@@ -20,6 +21,7 @@ interface CaregiverOverviewProps {
 }
 
 export function CaregiverOverview({
+  caregiverName,
   assignments,
   recentAlerts,
   upcomingAppointments,
@@ -37,7 +39,7 @@ export function CaregiverOverview({
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-foreground">
-          Panel del cuidador
+          Hola, {caregiverName}
         </h1>
         <p className="text-muted-foreground mt-1">
           Monitorea a tus pacientes y mantente al tanto de las alertas
