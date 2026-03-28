@@ -1,0 +1,1 @@
+-- Sin datos semilla por defecto; añade aquí inserts de prueba si lo necesitas.
